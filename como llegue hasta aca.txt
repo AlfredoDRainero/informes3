@@ -1,0 +1,8 @@
+
+
+
+
+base de datos borrar de package.json sqlite
+
+ npm i electron-builder
+ npm i better-sqlite3

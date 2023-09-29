@@ -65,6 +65,7 @@ async function waitUntilFilesRemoved(ubicacion) {
 const userData = app.getAppPath(); // Obtén la ubicación de la aplicación
 
 async function SaveFilesToDB(ubicacion) {
+  let auxContador = 0;
   console.log("ubicacion:",ubicacion,"userData",userData)
   const archivos = fs
     .readdirSync(ubicacion)
@@ -117,7 +118,8 @@ async function SaveFilesToDB(ubicacion) {
     }
 
    
-
+    console.log("contando:",auxContador)
+    auxContador++;
 
     partNumber++;
   }

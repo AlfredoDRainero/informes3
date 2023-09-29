@@ -4,7 +4,7 @@ function splitText(text) {
 
   for (let i = 0; i < rows.length; i++) {
     const columns = rows[i].split("\t"); // Divide cada fila en columnas utilizando el carácter de tabulación ('\t')
-    const slicedColumns = columns.slice(0, 4).concat(columns.slice(5, 9)); // Obtiene un subconjunto de columnas según los índices especificados
+    const slicedColumns = columns.slice(2, 4).concat(columns.slice(5, 9)); // Obtiene un subconjunto de columnas según los índices especificados
     result.push(slicedColumns); // Agrega las columnas al resultado
   }
 

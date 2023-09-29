@@ -104,9 +104,9 @@ async function saveContenidoDataToDB(data, partnb, dbPath) {
 function BucleRow(row, partnb) {
   const document = [partnb];
 
-  const properties = row.slice(2);
-  for (let index = 0; index < properties.length; index++) {
-    document.push(properties[index]);
+  //const properties = row.slice(2);
+  for (let index = 0; index < row.length; index++) {
+    document.push(row[index]);
   }
 
   return document;

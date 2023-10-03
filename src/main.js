@@ -74,6 +74,94 @@ app.on("activate", () => {
 
 
 
+
+
+
+
+//---------------- one Msj recib one msj send---------------------------------------------------------------
+
+
+
+ipcMain.on("msjToMainName", async (event, request) => {
+  console.log("request completo: ", request.MSJREQUEST);
+
+  const responseChannel = request.responseChannel;
+
+  const REQUEST_FROM_FRONT = {
+    A: () => {console.log("valor", request.DATO1);return request.DATO1;},
+    B: () => {SaveFile()},
+    C: () => {},
+    D: () => {},
+    E: () => {return buscarArchivosEnCarpeta();},
+    F: async () => {
+      try {
+        const valorDevuelto = await funcionPrincipal();
+        console.log("La función principal ha devuelto:", valorDevuelto);
+        return valorDevuelto;
+      } catch (error) {
+        console.error("Error:", error);
+        throw error; // Lanza el error para que se maneje adecuadamente
+      }
+    }
+    
+  };
+
+  const REQUEST_DEFAULT = "-NULL-";
+
+  // llamado a funcion con ternario
+  const requestResult = REQUEST_FROM_FRONT[request.MSJREQUEST]
+    ? await REQUEST_FROM_FRONT[request.MSJREQUEST]()
+    : REQUEST_DEFAULT;
+
+  // Envía la respuesta de vuelta al canal único
+  event.reply(responseChannel, requestResult);
+});
+
+
+//--------------------------
+// prueba
+
+async function esperaConTemporizador(tiempoEnMilisegundos) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("resuelto");
+    }, tiempoEnMilisegundos);
+  });
+}
+
+async function funcionPrincipal() {
+  console.log("Comenzando la ejecución de la función principal...");
+  
+  const resultado = await esperaConTemporizador(3000); // Espera 3 segundos
+  
+  console.log("La función principal ha terminado, resultado:", resultado);
+  
+  return resultado; // Devuelve el valor "resuelto" una vez completado el tiempo
+}
+
+
+
+
+
+
+
+
+//------------------------------------
+async function recoverDatafromDB(dbFile) {
+  try {
+    const userData = app.getAppPath();
+    const dbFolder = path.join(userData, './data/');
+    
+    const fileData = await readFileInFolder(dbFolder, dbFile);
+   // console.log("fileData",fileData)
+    return fileData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+
 function SaveFile() {
   const userData = app.getAppPath();
   const dbFolder = path.join(userData, `./InformesSinProcesar/`);
@@ -81,48 +169,12 @@ function SaveFile() {
 }
 
 
-
-
-
-//---------------- one Msj recib one msj send---------------------------------------------------------------
-
-ipcMain.on("msjToMainName", (event, request) => {
-  console.log("request completo: ", request.MSJREQUEST);
-
-  const REQUEST_FROM_FRONT = {
-    A: () => {console.log("valor", request.DATO1);return request.DATO1;},
-    B: () => {console.log("file:", request.DATO1);SaveFile() /* console.log("file content:", recoverDatafromDB(request.DATO1)) */    },
-    C: () => {},
-    D: () => {},
-    E: () => {return buscarArchivosEnCarpeta();}
-  };
-
-  const REQUEST_DEFAULT = "-NULL-";
-
-  // llamado a funcion con ternario
-
-  const requestResult = REQUEST_FROM_FRONT[request.MSJREQUEST]
-    ? REQUEST_FROM_FRONT[request.MSJREQUEST]()
-    : REQUEST_DEFAULT;
-
-  //mainWindow.webContents.send("msjToRenderName", requestResult);
-  event.reply("msjToRenderName", requestResult);
-});
-
-function recoverDatafromDB(dbFile) {
-  return new Promise(async (resolve) => {
-    const userData = app.getAppPath(); // Obtén la ubicación de la aplicación
-    //console.log("userData:", userData);
-    const dbFolder = path.join(userData, `./data/`);
-    //console.log("---------------------------------------dbFolder:", dbFolder);
-    //const dbFolder = "../../../../data/"; // Cambia esto a la ruta correcta
-    const fileData = await readFileInFolder(dbFolder, dbFile);
-    console.log("probando:", dbFolder, dbFile, fileName);
-    //resolve(fileData);
-  });
-}
-
 //---------------------------------------------------------------------------------
+
+
+
+
+
 
 /*ipcMain.on("obtener-mensaje2", async (event) => {
   await obtenerRegistrosEncontrados()

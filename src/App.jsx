@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 //components
 import BurgerButton from "./components/BurgerButton";
 import Tabla_Indice from "./components/TablaIndice";
 
-//functions
-import MSJ_FROMFRONT_sendAdressUnformatedReports from "./SendAndReceiveData";
-
-//import MSJ_FROMBACK_IndiceDB from "./SendAndReceiveData";
-//import MSJ_FROMBACK_filesDB_Data_Carpet from "./SendAndReceiveData";
-
 import FileListTable from "./components/TablaFiles";
 
 import { RequestMsj } from "./SendAndReceiveData";
-
 
 
 
@@ -50,8 +43,34 @@ const Content = styled.div`
   background-color: #f0f2f5;
 `;
 
+const fadeIn = keyframes`
+  from {
+    background-color: black;
+    color: white;
+  }
+  to {
+    background-color: white;
+    color: black;
+  }
+`;
+
 const MenuIcon = styled.div`
-  font-size: 24px;
+  padding: 5px 5px;
+  margin: 2px;
+  //border-radius: 6px;
+  border-width: 1px;
+  border-style: solid;
+  font-size: 12px;
+  font-family: "Ubuntu", sans-serif;
+  cursor: pointer;
+  transition: 0.3s ease;
+  background-color: black;
+  color: white;
+
+  &:hover {
+    animation: ${fadeIn} 0.3s ease;
+    animation-fill-mode: forwards;
+  }
 `;
 
 const ContentHeader = styled.h1`
@@ -64,13 +83,11 @@ const GridContainer = styled.div`
   grid-template-rows: auto 1fr; /* Una fila automática arriba, y una fila fr (proporcional) abajo */
   height: 100%; /* Establece la altura del contenedor al 100% del viewport */
   width: 100%;
-
 `;
 
 const TopContainer = styled.div`
   /* Estilos para el contenedor superior */
   background-color: #f0f2f5;
- 
 `;
 
 const BottomContainer = styled.div`
@@ -97,85 +114,42 @@ function App() {
   const [tablaIndice, setTablaIndice] = useState({ rows: [] });
   //const [fileList, setFileList] = useState(null);
 
- 
-
-/*  
-  useEffect(() => {
-    async function obtenerMensaje() {
-      try {
-        const mensaje = await window.electronAPI.recibirMensaje();
-        console.log("Mensaje 1recibido en app.jsx:", mensaje);
-      } catch (error) {
-        console.error("Error al obtener el mensaje:", error);
-      }
-    }
-
-    async function obtenerMensajeIndiceDB() {
-      try {
-        const msj = await window.electronAPI.recibirMensajeIndiceDB(); //desde preload.js
-        setTablaIndice(msj);
-      } catch (error) {
-        console.error("Error al obtener el mensaje:", error);
-      }
-    }
-    obtenerMensajeIndiceDB();
-  }, []);
-
-  useEffect(() => {
-
-  }, [tablaIndice]);
-*/
-
-
-//-----------------------------------------------------
-//const [msj3, setMsj3] = useState([]);
-/*const fileList = [];
-for (const nombreArchivo in msj) {
-  const elemento = msj[nombreArchivo].nombre;
-  fileList.push(SubStringDateAndFilename(elemento));
-}
-
-const nombresUnicos = [...new Set(fileList.map((file) => file.name))];*/
-
-
-async function FileDataDb() {
-  try {
-    const consulta3 = { MSJREQUEST: "B" };
-    await RequestMsj(consulta3);
-    //setMsj3(newMsj3);
-  } catch (error) {
-    console.error("Error al obtener el mensaje:", error);
+  //-----------------------------------------------------
+  //const [msj3, setMsj3] = useState([]);
+  /*const fileList = [];
+  for (const nombreArchivo in msj) {
+    const elemento = msj[nombreArchivo].nombre;
+    fileList.push(SubStringDateAndFilename(elemento));
   }
-}
 
-/*useEffect(() => {
-  
-  console.log("msj3:", msj3);
-}, [msj3]);*/
+  const nombresUnicos = [...new Set(fileList.map((file) => file.name))];*/
 
-//----------------------------------
+  async function FileDataDb() {
+    try {
+      const consulta3 = { MSJREQUEST: "B" };
+      await RequestMsj(consulta3);
+      //setMsj3(newMsj3);
+    } catch (error) {
+      console.error("Error al obtener el mensaje:", error);
+    }
+  }
 
+  //---------------------------------------- enviar y recibir
 
-   //---------------------------------------- enviar y recibir
- 
- 
-   useEffect(() => {
-    
-     const pregunta =  { MSJREQUEST:"A" ,DATO1: "12345", DATO2: "6789" } ;
-     RequestMsj(pregunta)
-   }, []);
-
-    
-   //------------------------------------------------------------------------------
+  useEffect(() => {
+    const pregunta = { MSJREQUEST: "A", DATO1: "12345", DATO2: "6789" };
+    RequestMsj(pregunta);
+  }, []);
 
   return (
     <>
       <MainDiv>
+        
         <div style={{ display: "flex" }}>
           <Sider>
             {/* Menú */}
             <MenuIcon>☰</MenuIcon>
-            <MenuIcon onClick={() => FileDataDb() }>◉</MenuIcon>
+            <MenuIcon onClick={() => FileDataDb()}>SaveToDB</MenuIcon>
             <MenuIcon>📂</MenuIcon>
           </Sider>
           <GridContainer>
@@ -207,10 +181,4 @@ async function FileDataDb() {
 
 export default App;
 
-/*<h1>Data from SQLite Database</h1>
-        <ul>
-          {data.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-          <Table data={convertLastFiveColumns(splitText(fileContent))} />*/
+     

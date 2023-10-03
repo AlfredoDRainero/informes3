@@ -108,9 +108,23 @@ function FileListTable() {
     }
   };
 
-  const readDBfile = (archivo) => {
+  /*const  = (archivo) => {
     console.log("file", archivo);
-  };
+  };*/
+
+  async function readDBfile(archivo) {
+    console.log("file", archivo);
+    try {
+      const consulta = { MSJREQUEST: "F", DATO1: archivo };
+      const newMsj = RequestMsj(consulta);
+      
+      console.log("Esperando a que se resuelva la promesa...",newMsj);       
+      console.log("newMsj resuelto:", newMsj);
+      // setMsj(newMsj);
+    } catch (error) {
+      console.error("Error al obtener el mensaje:", error);
+    }
+  }
 
   return (
     <TableContainer>

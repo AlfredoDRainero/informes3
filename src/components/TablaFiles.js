@@ -116,7 +116,7 @@ function FileListTable() {
     console.log("file", archivo);
     try {
       const consulta = { MSJREQUEST: "F", DATO1: archivo };
-      const newMsj = RequestMsj(consulta);
+      const newMsj = await RequestMsj(consulta);
       
       console.log("Esperando a que se resuelva la promesa...",newMsj);       
       console.log("newMsj resuelto:", newMsj);

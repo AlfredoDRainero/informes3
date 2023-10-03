@@ -5,7 +5,7 @@ export async function RequestMsj(MSJ) {
       console.log("responseChannel",responseChannel)
       // Escucha la respuesta en el canal único
       await window.electron.receiveFromMain(responseChannel, (data) => {
-        console.log("data:",data)
+        //console.log("data:",data)
         resolve(data); // Resuelve la promesa con los datos recibidos
       });
 

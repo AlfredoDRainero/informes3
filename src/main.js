@@ -93,16 +93,14 @@ ipcMain.on("msjToMainName", async (event, request) => {
     C: () => {},
     D: () => {},
     E: () => {return buscarArchivosEnCarpeta();},
-    F: async () => {
-      try {
-        const valorDevuelto = await recoverDatafromDB(request.DATO1);
-        console.log("La función principal ha devuelto:", valorDevuelto);
-        return valorDevuelto;
-      } catch (error) {
-        console.error("Error:", error);
-        throw error; // Lanza el error para que se maneje adecuadamente
-      }
-    }
+    F: () => {try {
+                    const valorDevuelto = recoverDatafromDB(request.DATO1);
+                    return valorDevuelto;
+                  } catch (error) {
+                    console.error("Error:", error);
+                    throw error; 
+                  }
+              }
     
   };
 
@@ -118,42 +116,11 @@ ipcMain.on("msjToMainName", async (event, request) => {
 });
 
 
-//--------------------------
-// prueba
-
-async function esperaConTemporizador(tiempoEnMilisegundos) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("resuelto");
-    }, tiempoEnMilisegundos);
-  });
-}
-
-async function funcionPrincipal() {
-  console.log("Comenzando la ejecución de la función principal...");
-  
-  const resultado = await esperaConTemporizador(3000); // Espera 3 segundos
-  
-  console.log("La función principal ha terminado, resultado:", resultado);
-  
-  return resultado; // Devuelve el valor "resuelto" una vez completado el tiempo
-}
-
-
-
-
-
-
-
-
-//------------------------------------
 async function recoverDatafromDB(dbFile) {
   try {
     const userData = app.getAppPath();
-    const dbFolder = path.join(userData, './data/');
-    
+    const dbFolder = path.join(userData, './data/');    
     const fileData = await readFileInFolder(dbFolder, dbFile);
-   // console.log("fileData",fileData)
     return fileData;
   } catch (error) {
     console.error("Error:", error);

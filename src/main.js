@@ -95,7 +95,7 @@ ipcMain.on("msjToMainName", async (event, request) => {
     E: () => {return buscarArchivosEnCarpeta();},
     F: async () => {
       try {
-        const valorDevuelto = await funcionPrincipal();
+        const valorDevuelto = await recoverDatafromDB(request.DATO1);
         console.log("La función principal ha devuelto:", valorDevuelto);
         return valorDevuelto;
       } catch (error) {

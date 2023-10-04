@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { RequestMsj } from "../SendAndReceiveData";
+import { RequestMsj } from "../../SendAndReceiveData";
 
 const TableContainer = styled.div`
   width: 100%; // Ajusta el ancho de la tabla según tus necesidades
@@ -28,7 +28,6 @@ const Td = styled.td`
   text-overflow: ellipsis; /* Muestra los tres puntos */
 `;
 
-
 function SubStringDateAndFilename(texto) {
   const indicePunto = texto.lastIndexOf(".");
   const indiceGuionBajo = texto.lastIndexOf("_", indicePunto) - 5;
@@ -44,15 +43,15 @@ function SubStringDateAndFilename(texto) {
   }
 }
 
-
-
-
 function FileListTable() {
   const [expandedRow, setExpandedRow] = useState(null);
   const [expandedSubRow, setExpandedSubRow] = useState(null);
 
+  const [dataFiles, setDataFiles] = useState(["Dato 1", "Dato 2", "Dato 3"]);
+  const [showDF, setShowDF] = useState(false);
 
-//----------------------------------------------------CARGA LISTA FILES------------------------------------------
+
+  //----------------------------------------------------CARGA LISTA FILES------------------------------------------
   const [msj, setMsj] = useState([]);
   const fileList = [];
   for (const nombreArchivo in msj) {
@@ -67,37 +66,28 @@ function FileListTable() {
 
   const nombresUnicos = [...new Set(fileList.map((file) => file.name))];
 
-  //const pregunta =  { MSJREQUEST:"A" ,DATO1: "1234", DATO2: "6789" } ;
-
+  
   async function fetchData() {
     try {
-      const consulta = { MSJREQUEST: "E", DATO1: "1234" };
+      const consulta = { MSJREQUEST: "E"};
       const newMsj = await RequestMsj(consulta);
       setMsj(newMsj);
     } catch (error) {
       console.error("Error al obtener el mensaje:", error);
     }
   }
-
+  useEffect(() => { fetchData();}, []); // Este useEffect se ejecuta solo cuando el componente se monta
   useEffect(() => {
-    fetchData();
-  }, []); // Este useEffect se ejecuta solo cuando el componente se monta
-
-  useEffect(() => {
-    // Este useEffect se ejecuta cuando msj2 cambia
-    //console.log("msj:", msj);
+    
   }, [msj]);
 
-//---------------------------------------------------CARGA LISTA FILES END ---------------------------------------------------
 
+  useEffect(() => {
+    
+    console.log("dataFiles.length:", dataFiles);
 
+  }, [dataFiles]);
 
-
-//-------------------------------------------------- CARGA LISTA DB ARCHIVO ---------------------------------------
-
-
-
-//--------------------------------------------------------------------------------------------------------
 
 
   const handleRowClick = (index) => {
@@ -108,26 +98,37 @@ function FileListTable() {
     }
   };
 
-  /*const  = (archivo) => {
-    console.log("file", archivo);
-  };*/
+  
+
+ 
 
   async function readDBfile(archivo) {
     console.log("file", archivo);
     try {
       const consulta = { MSJREQUEST: "F", DATO1: archivo };
-      const newMsj = await RequestMsj(consulta);
-      
-      console.log("Esperando a que se resuelva la promesa...",newMsj);       
-      console.log("newMsj resuelto:", newMsj);
-      // setMsj(newMsj);
+      const result = await RequestMsj(consulta);
+
+      console.log("Esperando a que se resuelva la promesa...", result);
+      //console.log("newMsj resuelto:", result);
+      setDataFiles(result.data);
+      setShowDF(true);
     } catch (error) {
       console.error("Error al obtener el mensaje:", error);
     }
   }
 
+  useEffect(() => {
+    console.log("datafiles.lenght:",dataFiles)
+  }, [dataFiles]);
+
+
+  /*const contenidoDeEstado = dataFiles.map((elemento, index) => (
+    <p key={index}>{elemento}</p>
+  ));
+*/
   return (
     <TableContainer>
+      
       <Table>
         <thead>
           <tr>
@@ -138,8 +139,8 @@ function FileListTable() {
           {/*-----------------------------------------------------------------------------------------file name----------------------------*/}
           {nombresUnicos.map((nombre, index) => (
             <React.Fragment key={index}>
-              <tr onClick={() => setExpandedRow(index)}>
-                <Td>
+              <tr onClick={() => setExpandedRow(index) & setShowDF(false)}>
+                <Td style={{color:"red"}}>
                   {nombre}
                   <div style={{ margin: "5px" }}>
                     {/*---------------------------------------------file date----------------------------*/}
@@ -149,12 +150,14 @@ function FileListTable() {
                           fileList
                             .filter((file) => file.name === nombre)
                             .map((file, subIndex) => (
-                              <tr
+                              <tr style={{color:"blue"}}
                                 key={subIndex}
                                 onClick={
                                   () =>
                                     setExpandedSubRow(subIndex) &
-                                    readDBfile(file.name + "_" + file.date + ".db") 
+                                    readDBfile(
+                                      file.name + "_" + file.date + ".db"
+                                    )
                                   //console.log("click en", file.date)
                                 }
                               >
@@ -169,17 +172,16 @@ function FileListTable() {
                                     >
                                       {/*--------------------Reports----------------------------*/}
                                       <Table>
-                                        <tbody>
-                                          <tr>
-                                            <td>5 lib m2 ra 3971</td>
-                                            <td>7:51</td>
-                                            <td>dia 1</td>
-                                          </tr>
-                                          <tr>
-                                            <td>5 lib m2 ra 3971</td>
-                                            <td>7:51</td>
-                                            <td>dia 1</td>
-                                          </tr>
+                                        <tbody style={{color:"green"}}>                                         
+                                          {showDF && 
+                                            dataFiles.map((elemento, index) => (
+                                              <tr key={index}>
+                                                <td>{elemento.date}</td>
+                                                <td>{elemento.time}</td>                                        
+                                                <td>{elemento.partnb}</td>
+                                                <td>{elemento.orden}</td>
+                                              </tr>
+                                            ))}
                                         </tbody>
                                       </Table>
                                     </div>

@@ -6,7 +6,7 @@ import styled, { keyframes } from "styled-components";
 import BurgerButton from "./components/BurgerButton";
 import Tabla_Indice from "./components/TablaIndice";
 
-import FileListTable from "./components/TablaFiles";
+import FileListTable from "./components/TableFiles/TablaFiles";
 
 import { RequestMsj } from "./SendAndReceiveData";
 

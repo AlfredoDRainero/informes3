@@ -64,15 +64,6 @@ app.on("activate", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-// carga de archivos en base de datos con llamada activada pedida desde react
-/*ipcMain.on("direccion", (event, ubicacion) => {
-  console.log("hasta aca llego..", ubicacion);
-  // SaveFilesToDB(ubicacion);
-  //console.log("ubicacion:", ubicacion);
-});
-*/
-
-
 
 
 
@@ -80,28 +71,18 @@ app.on("activate", () => {
 
 //---------------- one Msj recib one msj send---------------------------------------------------------------
 
-
-
 ipcMain.on("msjToMainName", async (event, request) => {
   console.log("request completo: ", request.MSJREQUEST);
 
   const responseChannel = request.responseChannel;
 
   const REQUEST_FROM_FRONT = {
-    A: () => {console.log("valor", request.DATO1);return request.DATO1;},
-    B: () => {SaveFile()},
+    A: () => {console.log("valor", request.DATO1);return request.DATO1;},//ejemplo
+    B: () => {SaveFile()},// carga de archivos en base de datos con llamada activada pedida desde react
     C: () => {},
     D: () => {},
     E: () => {return buscarArchivosEnCarpeta();},
-    F: () => {try {
-                    const valorDevuelto = recoverDatafromDB(request.DATO1);
-                    return valorDevuelto;
-                  } catch (error) {
-                    console.error("Error:", error);
-                    throw error; 
-                  }
-              }
-    
+    F: () => {try { return recoverDatafromDB(request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}    
   };
 
   const REQUEST_DEFAULT = "-NULL-";
@@ -136,56 +117,3 @@ function SaveFile() {
 }
 
 
-//---------------------------------------------------------------------------------
-
-
-
-
-
-
-/*ipcMain.on("obtener-mensaje2", async (event) => {
-  await obtenerRegistrosEncontrados()
-    .then((registrosEncontrados) => {
-      // Aquí podemos acceder a los datos en la variable registrosEncontrados
-      event.sender.send(
-        "dateTimePartnbPathFromFile_Main_to_App",
-        registrosEncontrados
-      );
-    })
-    .catch((error) => {
-      console.error("Error al obtener registros:", error);
-    });
-});
-*/
-
-//---------------------- mensaje 1 start-----------------------------------
-// Función asincrónica que retorna una promesa con un mensaje
-
-//-----------------------mensaje 1 end ------------------------------------
-
-// Función asincrónica que retorna una promesa con un mensaje
-
-/*function doSomethingAsync2() {
-  return new Promise(async (resolve) => {
-    const userData = app.getAppPath(); // Obtén la ubicación de la aplicación
-    console.log("userData:", userData);
-    const dbFolder = path.join(userData, `./data/`);
-    console.log("---------------------------------------dbFolder:", dbFolder);
-    //const dbFolder = "../../../../data/"; // Cambia esto a la ruta correcta
-    const fileData = await readFilesInFolder(dbFolder);
-    resolve(fileData);
-  });
-}*/
-
-//-----------------------MSJ_filesDB_on_Carpet_Data---------------------Start
-/*
-ipcMain.on("LISTENER_SEARCH_FILE_DATA_CARPET", async (event) => {
-  try {
-    const msj = await buscarArchivosEnCarpeta();
-    console.log("msj------------->", msj);
-    event.sender.send("SEND_RESULT__SEARCH_FILE_DATA_CARPET", msj);
-  } catch (error) {
-    enviarMensajeDeError(event, "Error al obtener el mensaje");
-  }
-});*/
-//-----------------------MSJ_filesDBonData------------------END

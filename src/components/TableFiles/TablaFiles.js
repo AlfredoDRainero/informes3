@@ -1,7 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
-
 import { RequestMsj } from "../../SendAndReceiveData";
+
+
+
+import MyContext from '../../Context';
+
+
+const { variableEnB, updateVariableEnB } = useContext(MyContext);
+
+
+
 
 const TableContainer = styled.div`
   width: 100%; // Ajusta el ancho de la tabla según tus necesidades
@@ -44,6 +53,9 @@ function SubStringDateAndFilename(texto) {
 }
 
 function FileListTable() {
+
+
+
   const [expandedRow, setExpandedRow] = useState(null);
   const [expandedSubRow, setExpandedSubRow] = useState(null);
 
@@ -84,7 +96,7 @@ function FileListTable() {
 
   useEffect(() => {
     
-    console.log("dataFiles.length:", dataFiles);
+    //console.log("dataFiles.length:", dataFiles);
 
   }, [dataFiles]);
 
@@ -108,7 +120,7 @@ function FileListTable() {
       const consulta = { MSJREQUEST: "F", DATO1: archivo };
       const result = await RequestMsj(consulta);
 
-      console.log("Esperando a que se resuelva la promesa...", result);
+      //console.log("Esperando a que se resuelva la promesa...", result);
       //console.log("newMsj resuelto:", result);
       setDataFiles(result.data);
       setShowDF(true);
@@ -118,7 +130,7 @@ function FileListTable() {
   }
 
   useEffect(() => {
-    console.log("datafiles.lenght:",dataFiles)
+    //console.log("datafiles.lenght:",dataFiles)
   }, [dataFiles]);
 
 
@@ -126,9 +138,13 @@ function FileListTable() {
     <p key={index}>{elemento}</p>
   ));
 */
+
+
   return (
     <TableContainer>
-      
+      <p>Valor en B: {variableEnB}</p>
+      <button onClick={() => updateVariableEnB('NuevoValor')}>Cambiar Valor</button>
+      <p>{theme}</p>
       <Table>
         <thead>
           <tr>
@@ -175,7 +191,7 @@ function FileListTable() {
                                         <tbody style={{color:"green"}}>                                         
                                           {showDF && 
                                             dataFiles.map((elemento, index) => (
-                                              <tr key={index}>
+                                              <tr key={index} onClick={() =>console.log("elemento.partnb",elemento.partnb)}>
                                                 <td>{elemento.date}</td>
                                                 <td>{elemento.time}</td>                                        
                                                 <td>{elemento.partnb}</td>

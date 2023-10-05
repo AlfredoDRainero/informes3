@@ -5,11 +5,14 @@ import styled, { keyframes } from "styled-components";
 //components
 import BurgerButton from "./components/BurgerButton";
 import Tabla_Indice from "./components/TablaIndice";
+import TablaPrincipal from "./components/TablaPrincipal";
 
 import FileListTable from "./components/TableFiles/TablaFiles";
 
 import { RequestMsj } from "./SendAndReceiveData";
 
+//import Context from "./Context";
+import  { createContext } from 'react';
 
 
 const MainDiv = styled.div`
@@ -110,8 +113,13 @@ const RightBottomContainer = styled.div`
   height: 100%;
 `;
 
+const MyContext = createContext();
+
 function App() {
+  const [variableEnB, setVariableEnB] = useState("X");
+
   const [tablaIndice, setTablaIndice] = useState({ rows: [] });
+
   //const [fileList, setFileList] = useState(null);
 
   //-----------------------------------------------------
@@ -141,44 +149,48 @@ function App() {
     RequestMsj(pregunta);
   }, []);
 
+  const updateVariableEnB = (newValue) => {
+    setVariableEnB(newValue);
+  };
+
   return (
     <>
-      <MainDiv>
-        
-        <div style={{ display: "flex" }}>
-          <Sider>
-            {/* Menú */}
-            <MenuIcon>☰</MenuIcon>
-            <MenuIcon onClick={() => FileDataDb()}>SaveToDB</MenuIcon>
-            <MenuIcon>📂</MenuIcon>
-          </Sider>
-          <GridContainer>
-            <Header>
-              {/* Barra superior */}
-              <BurgerButton />
-              <ContentHeader>Barra superior</ContentHeader>
-            </Header>
-            <TopContainer>
-              {/* Contenedor superior */}
-              <div>Contenido de la página</div>
-            </TopContainer>
-            <BottomContainer>
-              {/* Contenedor inferior */}
-              <LeftBottomContainer>
-                <Tabla_Indice data={tablaIndice} />{" "}
-                {/*problema por la falta de key aca*/}
-              </LeftBottomContainer>
-              <RightBottomContainer>
-                <FileListTable />
-              </RightBottomContainer>
-            </BottomContainer>
-          </GridContainer>
-        </div>
-      </MainDiv>
+      <MyContext.Provider value={{ variableEnB, updateVariableEnB }}>
+        <MainDiv>
+          <div style={{ display: "flex" }}>
+            <Sider>
+              {/* Menú */}
+              <MenuIcon>☰</MenuIcon>
+              <MenuIcon onClick={() => FileDataDb()}>SaveToDB</MenuIcon>
+              <MenuIcon>📂</MenuIcon>
+            </Sider>
+            <GridContainer>
+              <Header>
+                {/* Barra superior */}
+                <BurgerButton />
+                <ContentHeader>Barra superior</ContentHeader>
+              </Header>
+              <TopContainer>
+                {/* Contenedor superior */}
+                <div>Contenido de la página</div>
+              </TopContainer>
+              <BottomContainer>
+                {/* Contenedor inferior */}
+                <LeftBottomContainer>
+                  <Tabla_Indice data={tablaIndice} />{" "}
+                  {/*problema por la falta de key aca*/}
+                </LeftBottomContainer>
+                <RightBottomContainer>
+                  <FileListTable />
+                </RightBottomContainer>
+              </BottomContainer>
+            </GridContainer>
+          </div>
+        </MainDiv>
+        <TablaPrincipal />
+      </MyContext.Provider>
     </>
   );
 }
 
 export default App;
-
-     

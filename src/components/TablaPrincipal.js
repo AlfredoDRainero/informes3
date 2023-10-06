@@ -1,20 +1,24 @@
-import React from "react";
-import styled from "styled-components";
-import { useContext } from "react";
-import MyContext from '../Context';
+import {MyContext} from "../contexts/MyContext"
+import React, { useEffect, useState, createContext,useContext  } from "react";  
 
-function TablaPrincipal() {
- // const [tablaIndice, setTablaIndice] = useState([]);
+function Tablaprincipal() {
+  const { han, updateHan  } = useContext(MyContext);
 
-  const { variableEnB } = useContext(MyContext);
+  const handleChange = (event) => {
+    updateHan(event.target.value);
+  };
 
-  //useEffect(() => {}, []);
+  const handleClick = () => {
+    updateHan("Han");
+    //alert(`Valor cargado en la caja de texto: ${han}`);
+  };
 
   return (
-    <>
-      <p>Valor en C: {variableEnB}</p>
-    </>
+    <div>
+      <input type="text" value={han} onChange={handleChange} />
+      <button onClick={handleClick}>Update Han</button>
+    </div>
   );
 }
 
-export default TablaPrincipal;
+export default Tablaprincipal;

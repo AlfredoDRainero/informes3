@@ -4,12 +4,6 @@ import { RequestMsj } from "../../SendAndReceiveData";
 
 
 
-import MyContext from '../../Context';
-
-
-const { variableEnB, updateVariableEnB } = useContext(MyContext);
-
-
 
 
 const TableContainer = styled.div`
@@ -142,9 +136,7 @@ function FileListTable() {
 
   return (
     <TableContainer>
-      <p>Valor en B: {variableEnB}</p>
-      <button onClick={() => updateVariableEnB('NuevoValor')}>Cambiar Valor</button>
-      <p>{theme}</p>
+      
       <Table>
         <thead>
           <tr>

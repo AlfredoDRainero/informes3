@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext,useContext  } from "react";
 import "./index.css";
 import styled, { keyframes } from "styled-components";
 
 //components
 import BurgerButton from "./components/BurgerButton";
 import Tabla_Indice from "./components/TablaIndice";
-import TablaPrincipal from "./components/TablaPrincipal";
-
 import FileListTable from "./components/TableFiles/TablaFiles";
+import TablaPrincipal from "./components/TablaPrincipal";
 
 import { RequestMsj } from "./SendAndReceiveData";
 
-//import Context from "./Context";
-import  { createContext } from 'react';
+
+import { MyContextProvider } from "./contexts/MyContextProvider";
+import { MyContext } from "./contexts/MyContext";
+
+
 
 
 const MainDiv = styled.div`
@@ -113,11 +115,12 @@ const RightBottomContainer = styled.div`
   height: 100%;
 `;
 
-const MyContext = createContext();
+
+
 
 function App() {
-  const [variableEnB, setVariableEnB] = useState("X");
-
+ 
+  const { han } = useContext(MyContext);
   const [tablaIndice, setTablaIndice] = useState({ rows: [] });
 
   //const [fileList, setFileList] = useState(null);
@@ -153,10 +156,16 @@ function App() {
     setVariableEnB(newValue);
   };
 
+
+
   return (
-    <>
-      <MyContext.Provider value={{ variableEnB, updateVariableEnB }}>
+    <MyContextProvider>
+     
+     
+     <TablaPrincipal/>
+        <p>Han: {han}</p>
         <MainDiv>
+       
           <div style={{ display: "flex" }}>
             <Sider>
               {/* Menú */}
@@ -187,10 +196,10 @@ function App() {
             </GridContainer>
           </div>
         </MainDiv>
-        <TablaPrincipal />
-      </MyContext.Provider>
-    </>
+       
+        </MyContextProvider>
+      
   );
 }
 
-export default App;
+export default App  ;

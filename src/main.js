@@ -6,7 +6,8 @@ const { SaveFilesToDB } = require("./services/database/FilesToDb");
 
 const {
   readFilesInFolder,
-  readFileInFolder
+  readFileData,
+  readFileMeasurement
 } = require("../src/services/database/LoadDatabase_BSQLITE3");
 
 const path = require("path");
@@ -82,7 +83,8 @@ ipcMain.on("msjToMainName", async (event, request) => {
     C: () => {},
     D: () => {},
     E: () => {return buscarArchivosEnCarpeta();},
-    F: () => {try { return recoverDatafromDB(request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}    
+    F: () => {try { return recoverDataFilesfromDBFile(request.DATO1);} catch (error) { console.error("Error:", error); throw error;}},   
+    G: () => {try { return recoverMeasurementsfromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}  
   };
 
   const REQUEST_DEFAULT = "-NULL-";
@@ -97,11 +99,25 @@ ipcMain.on("msjToMainName", async (event, request) => {
 });
 
 
-async function recoverDatafromDB(dbFile) {
-  try {
+async function recoverDataFilesfromDBFile(dbFile) {
+  try {    
     const userData = app.getAppPath();
     const dbFolder = path.join(userData, './data/');    
-    const fileData = await readFileInFolder(dbFolder, dbFile);
+    const fileData = await readFileData(dbFolder, dbFile);
+    return fileData;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+async function recoverMeasurementsfromDBFileAndPartnb(dbFile,partnb) {
+  try {    
+
+    const userData = app.getAppPath();
+    const dbFolder = path.join(userData, './data/');    
+    const fileData = await readFileMeasurement(dbFolder, dbFile, partnb);
+    console.log("fileData",fileData)
     return fileData;
   } catch (error) {
     console.error("Error:", error);

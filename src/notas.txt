@@ -1,0 +1,8 @@
+08D9D6 verde claro
+252A34 gris oscuro
+FF2E63 rojo/rosa claro
+EAEAEA gris clarito 
+
+
+222831 gris oscuro obtenerFechaMedicion
+393E46 gris oscuro medio claro

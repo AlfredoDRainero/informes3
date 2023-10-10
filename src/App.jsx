@@ -6,15 +6,13 @@ import styled, { keyframes } from "styled-components";
 import BurgerButton from "./components/BurgerButton";
 import Tabla_Indice from "./components/TablaIndice";
 import FileListTable from "./components/TableFiles/TablaFiles";
-import TablaPrincipal from "./components/TablaPrincipal";
+
 
 import { RequestMsj } from "./SendAndReceiveData";
 
-
-import { MyContextProvider } from "./contexts/MyContextProvider";
-import { MyContext } from "./contexts/MyContext";
-
-
+import { MyContextProvider } from './contexts/MyContext';
+import MyComponent from './components/MyComponentTest';
+import TablaPrincipal from "./components/TablaPrincipal";
 
 
 const MainDiv = styled.div`
@@ -120,7 +118,7 @@ const RightBottomContainer = styled.div`
 
 function App() {
  
-  const { han } = useContext(MyContext);
+  
   const [tablaIndice, setTablaIndice] = useState({ rows: [] });
 
   //const [fileList, setFileList] = useState(null);
@@ -159,19 +157,22 @@ function App() {
 
 
   return (
-    <MyContextProvider>
-     
-     
-     <TablaPrincipal/>
-        <p>Han: {han}</p>
+    <>
+     <MyContextProvider>
+    
+ 
+        
         <MainDiv>
        
           <div style={{ display: "flex" }}>
             <Sider>
+           
+            <MyComponent />
               {/* Menú */}
               <MenuIcon>☰</MenuIcon>
               <MenuIcon onClick={() => FileDataDb()}>SaveToDB</MenuIcon>
               <MenuIcon>📂</MenuIcon>
+              
             </Sider>
             <GridContainer>
               <Header>
@@ -186,8 +187,9 @@ function App() {
               <BottomContainer>
                 {/* Contenedor inferior */}
                 <LeftBottomContainer>
-                  <Tabla_Indice data={tablaIndice} />{" "}
-                  {/*problema por la falta de key aca*/}
+                <TablaPrincipal/>
+                  {/*<Tabla_Indice data={tablaIndice} />{" "}
+                  problema por la falta de key aca*/}
                 </LeftBottomContainer>
                 <RightBottomContainer>
                   <FileListTable />
@@ -196,8 +198,8 @@ function App() {
             </GridContainer>
           </div>
         </MainDiv>
-       
         </MyContextProvider>
+        </>
       
   );
 }

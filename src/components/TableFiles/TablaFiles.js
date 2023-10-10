@@ -1,35 +1,61 @@
 import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { RequestMsj } from "../../SendAndReceiveData";
-
+import { useMyContext } from "../../contexts/MyContext";
 
 
 
 
 const TableContainer = styled.div`
-  width: 100%; // Ajusta el ancho de la tabla según tus necesidades
+  width: 100%;
+  overflow-x: auto;
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  background-color: #252A34 ;
 `;
 
 const Th = styled.th`
-  background-color: #f2f2f2;
-  text-align: left;
+  background-color: #08D9D6;
+  color: #252A34;
   padding: 8px;
+ // border: 1px solid #252A34;
 `;
 
 const Td = styled.td`
-  border: 1px solid #ddd;
   padding: 8px;
-  cursor: pointer;
-  max-width: 20vw; /* Establece el ancho máximo */
-  white-space: nowrap; /* Evita el salto de línea */
-  overflow: hidden; /* Oculta el exceso de texto */
-  text-overflow: ellipsis; /* Muestra los tres puntos */
+  //border: 1px solid #252A34;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #EAEAEA;
+  background-color: #252A34 ;
 `;
+
+const NestedTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const NestedTd = styled.td`
+  padding: 8px;
+  //border: 1px solid #252A34;
+  color: #EAEAEA;
+`;
+
+const NestedSubTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const SubTableRow = styled.tr`
+  color: #EAEAEA;
+  cursor: pointer;
+`;
+
+
 
 function SubStringDateAndFilename(texto) {
   const indicePunto = texto.lastIndexOf(".");
@@ -48,7 +74,7 @@ function SubStringDateAndFilename(texto) {
 
 function FileListTable() {
 
-
+  const { measurementFile, setMeasurementFile } = useMyContext();
 
   const [expandedRow, setExpandedRow] = useState(null);
   const [expandedSubRow, setExpandedSubRow] = useState(null);
@@ -108,8 +134,8 @@ function FileListTable() {
 
  
 
-  async function readDBfile(archivo) {
-    console.log("file", archivo);
+  async function readDBfiles(archivo) {
+   // console.log("file", archivo);
     try {
       const consulta = { MSJREQUEST: "F", DATO1: archivo };
       const result = await RequestMsj(consulta);
@@ -131,85 +157,109 @@ function FileListTable() {
   /*const contenidoDeEstado = dataFiles.map((elemento, index) => (
     <p key={index}>{elemento}</p>
   ));
+
+
+
 */
+
+
+async function readDBIndividualfile(elemento , file) {
+  const fileName = file.name + "_" + file.date + ".db";
+  console.log("elemento.partnb",elemento.partnb , fileName)
+  
+  try {
+    const consulta = { MSJREQUEST: "G", DATO1: elemento.partnb, DATO2: fileName};
+    const result = await RequestMsj(consulta);
+
+    console.log("Esperando a que se resuelva la promesa...", result);
+    //console.log("newMsj resuelto:", result);
+    setMeasurementFile(result.data)
+
+
+  } catch (error) {
+    console.error("Error al obtener el mensaje:", error);
+  }
+}
+
+
+
 
 
   return (
     <TableContainer>
-      
-      <Table>
-        <thead>
-          <tr>
-            <Th>Nombre de Archivo</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {/*-----------------------------------------------------------------------------------------file name----------------------------*/}
-          {nombresUnicos.map((nombre, index) => (
-            <React.Fragment key={index}>
-              <tr onClick={() => setExpandedRow(index) & setShowDF(false)}>
-                <Td style={{color:"red"}}>
-                  {nombre}
-                  <div style={{ margin: "5px" }}>
-                    {/*---------------------------------------------file date----------------------------*/}
-                    <Table>
-                      <tbody>
-                        {expandedRow === index &&
-                          fileList
-                            .filter((file) => file.name === nombre)
-                            .map((file, subIndex) => (
-                              <tr style={{color:"blue"}}
-                                key={subIndex}
-                                onClick={
-                                  () =>
-                                    setExpandedSubRow(subIndex) &
-                                    readDBfile(
-                                      file.name + "_" + file.date + ".db"
-                                    )
-                                  //console.log("click en", file.date)
-                                }
-                              >
-                                <td>
-                                  {file.date}
-                                  {expandedSubRow === subIndex && (
-                                    <div
-                                      style={{
-                                        margin: "5px",
-                                        fontSize: "12px"
-                                      }}
-                                    >
-                                      {/*--------------------Reports----------------------------*/}
-                                      <Table>
-                                        <tbody style={{color:"green"}}>                                         
-                                          {showDF && 
-                                            dataFiles.map((elemento, index) => (
-                                              <tr key={index} onClick={() =>console.log("elemento.partnb",elemento.partnb)}>
-                                                <td>{elemento.date}</td>
-                                                <td>{elemento.time}</td>                                        
-                                                <td>{elemento.partnb}</td>
-                                                <td>{elemento.orden}</td>
-                                              </tr>
-                                            ))}
-                                        </tbody>
-                                      </Table>
-                                    </div>
-                                  )}
-                                  {/*----------------------------------------------------------------------------------------------------*/}
-                                </td>
-                              </tr>
-                            ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                  {/*------------------------------------------------------------------------------------------------------*/}
-                </Td>
-              </tr>
-            </React.Fragment>
-          ))}
-          {/*---------------------------------------------------------------------------------------------------------------------------*/}
-        </tbody>
-      </Table>
-    </TableContainer>
+    <Table>
+      <thead>
+        <tr>
+          <Th>Nombre de Archivo</Th>
+        </tr>
+      </thead>
+      <tbody>
+        {nombresUnicos.map((nombre, index) => (
+          <React.Fragment key={index}>
+            <tr onClick={() => setExpandedRow(index) & setShowDF(false)}>
+              <Td>
+                {nombre}
+                <div style={{ margin: "5px" }}>
+                  <NestedTable>
+                    <tbody>
+                      {expandedRow === index &&
+                        fileList
+                          .filter((file) => file.name === nombre)
+                          .map((file, subIndex) => (
+                            <SubTableRow
+                              key={subIndex}
+                              onClick={() =>
+                                setExpandedSubRow(subIndex) &
+                                readDBfiles(
+                                  file.name + "_" + file.date + ".db"
+                                )
+                              }
+                            >
+                              <NestedTd>
+                                {file.date}
+                                {expandedSubRow === subIndex && (
+                                  <div
+                                    style={{
+                                      margin: "5px",
+                                      fontSize: "12px"
+                                    }}
+                                  >
+                                    <NestedSubTable>
+                                      <tbody>
+                                        {showDF &&
+                                          dataFiles.map((elemento, index) => (
+                                            <tr
+                                              key={index}
+                                              onClick={() =>
+                                                readDBIndividualfile(
+                                                  elemento,
+                                                  file
+                                                )
+                                              }
+                                            >
+                                              <NestedTd>{elemento.date}</NestedTd>
+                                              <NestedTd>{elemento.time}</NestedTd>
+                                              <NestedTd>{elemento.partnb}</NestedTd>
+                                              <NestedTd>{elemento.orden}</NestedTd>
+                                            </tr>
+                                          ))}
+                                      </tbody>
+                                    </NestedSubTable>
+                                  </div>
+                                )}
+                              </NestedTd>
+                            </SubTableRow>
+                          ))}
+                    </tbody>
+                  </NestedTable>
+                </div>
+              </Td>
+            </tr>
+          </React.Fragment>
+        ))}
+      </tbody>
+    </Table>
+  </TableContainer>
   );
 }
 

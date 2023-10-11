@@ -153,18 +153,50 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
               console.log("Consulta exitosa");
 
               
-              //-------------------------------------------------
-              //--- CALCULO DE LA DESVIACION O DIFERENCIA -------
-              //-------------------------------------------------
+              
               rows.forEach((row) => {
+                //-------------------------------------------------
+                //--- CALCULO DE LA DESVIACION O DIFERENCIA -------
+                //-------------------------------------------------
                 // Acceso a la columna por índice
                 const actual = row[Object.keys(row)[4]];
                 const nominal = row[Object.keys(row)[5]];
+                 // Agregar el campo "dif" a cada fila 
                 actual > nominal ? 
                 row.dif = Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(3):
                 row.dif = Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(3) * (-1);
-                 // Agregar el campo "dif" a cada fila 
+                
+                //-------------------------------------------------
+                //--- CALCULO DE LA SIGNOS Y SOBRE TOLERANCIA -----
+                //-------------------------------------------------
+                const tolSup = parseFloat(row[Object.keys(row)[6]]);
+                const tolInf = row[Object.keys(row)[7]];
+
+                //const tolSup = parseFloat(row[Object.keys(row)[6]]);
+
+                const valorX = row.dif // Define el valor de valorX
+
+                const intervalo = tolSup / 4;
+
+                // Calcula en qué intervalo cae valorX
+                let intervaloMensaje = "fuera de los intervalos";
+
+                if (valorX >= 0 && valorX < intervalo) {
+                  intervaloMensaje = "+";
+                } else if (valorX >= intervalo && valorX < 2 * intervalo) {
+                  intervaloMensaje = "++";
+                } else if (valorX >= 2 * intervalo && valorX < 3 * intervalo) {
+                  intervaloMensaje = "+++";
+                } else if (valorX >= 3 * intervalo && valorX <= tolSup) {
+                  intervaloMensaje = "++++";
+                }
+
+                console.log(`valorX está ${intervaloMensaje}`);
+
+                row.exc = intervaloMensaje;
               });
+
+
 
               const result = { data: rows };
               stmt.finalize(); // Finaliza la declaración después de su uso

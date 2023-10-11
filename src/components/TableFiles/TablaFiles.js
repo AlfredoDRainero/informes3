@@ -3,12 +3,10 @@ import styled from "styled-components";
 import { RequestMsj } from "../../SendAndReceiveData";
 import { useMyContext } from "../../contexts/MyContext";
 
-
-
-
 const TableContainer = styled.div`
   width: 100%;
   overflow-x: auto;
+  
 `;
 
 const Table = styled.table`
@@ -20,29 +18,33 @@ const Table = styled.table`
 const Th = styled.th`
   background-color: #08D9D6;
   color: #252A34;
-  padding: 8px;
+  padding: 5px;
  // border: 1px solid #252A34;
 `;
 
 const Td = styled.td`
-  padding: 8px;
+  padding: 5px;
   //border: 1px solid #252A34;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   color: #EAEAEA;
   background-color: #252A34 ;
+ 
 `;
 
 const NestedTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+ 
 `;
 
 const NestedTd = styled.td`
-  padding: 8px;
+
+  padding: 5px;
   //border: 1px solid #252A34;
   color: #EAEAEA;
+  background-color: ${(props) => (props.isSelected ? "#0088FF" : "#252A34")};
 `;
 
 const NestedSubTable = styled.table`
@@ -74,7 +76,8 @@ function SubStringDateAndFilename(texto) {
 
 function FileListTable() {
 
-  const { measurementFile, setMeasurementFile } = useMyContext();
+  const {  setMeasurementFile } = useMyContext();
+  const {  setDataFile } = useMyContext();
 
   const [expandedRow, setExpandedRow] = useState(null);
   const [expandedSubRow, setExpandedSubRow] = useState(null);
@@ -108,40 +111,25 @@ function FileListTable() {
       console.error("Error al obtener el mensaje:", error);
     }
   }
+
   useEffect(() => { fetchData();}, []); // Este useEffect se ejecuta solo cuando el componente se monta
   useEffect(() => {
     
-  }, [msj]);
+  }, [msj]);  
 
 
-  useEffect(() => {
-    
-    //console.log("dataFiles.length:", dataFiles);
-
-  }, [dataFiles]);
-
-
-
-  const handleRowClick = (index) => {
+  /*const handleRowClick = (index) => {
     if (expandedRow === index) {
       setExpandedRow(null); // Si la fila ya está expandida, ciérrala
     } else {
       setExpandedRow(index); // De lo contrario, expande la fila haciendo clic en ella
     }
-  };
-
-  
-
- 
+  };*/
 
   async function readDBfiles(archivo) {
-   // console.log("file", archivo);
     try {
       const consulta = { MSJREQUEST: "F", DATO1: archivo };
       const result = await RequestMsj(consulta);
-
-      //console.log("Esperando a que se resuelva la promesa...", result);
-      //console.log("newMsj resuelto:", result);
       setDataFiles(result.data);
       setShowDF(true);
     } catch (error) {
@@ -149,40 +137,52 @@ function FileListTable() {
     }
   }
 
-  useEffect(() => {
-    //console.log("datafiles.lenght:",dataFiles)
-  }, [dataFiles]);
-
-
-  /*const contenidoDeEstado = dataFiles.map((elemento, index) => (
-    <p key={index}>{elemento}</p>
-  ));
-
-
-
-*/
-
-
-async function readDBIndividualfile(elemento , file) {
+async function readDBIndividualMeasurementfile(elemento , file) {
   const fileName = file.name + "_" + file.date + ".db";
-  console.log("elemento.partnb",elemento.partnb , fileName)
-  
+  console.log("elemento.partnb",elemento.partnb , fileName)  
   try {
     const consulta = { MSJREQUEST: "G", DATO1: elemento.partnb, DATO2: fileName};
     const result = await RequestMsj(consulta);
-
     console.log("Esperando a que se resuelva la promesa...", result);
-    //console.log("newMsj resuelto:", result);
     setMeasurementFile(result.data)
+  } catch (error) {
+    console.error("Error al obtener el mensaje:", error);
+  }
+}
 
-
+async function ReadDBIndividualDataFile(elemento , file) {
+  const fileName = file.name + "_" + file.date + ".db";
+  console.log("elemento.partnb",elemento.partnb , fileName)  
+  try {
+    const consulta = { MSJREQUEST: "H", DATO1: elemento.partnb, DATO2: fileName};
+    const result = await RequestMsj(consulta);
+    console.log("Esperando a que se resuelva la promesa...", result);
+    setDataFile(result.data)
   } catch (error) {
     console.error("Error al obtener el mensaje:", error);
   }
 }
 
 
+useEffect(() => {
+    
+}, [dataFiles]);
 
+
+useEffect(() => {
+    
+}, [dataFiles]);
+
+
+const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleRowClick = (index) => {
+    if (selectedRow === index) {
+      setSelectedRow(null);
+    } else {
+      setSelectedRow(index);
+    }
+  };
 
 
   return (
@@ -231,16 +231,21 @@ async function readDBIndividualfile(elemento , file) {
                                             <tr
                                               key={index}
                                               onClick={() =>
-                                                readDBIndividualfile(
+ 
+
+                                                readDBIndividualMeasurementfile(
                                                   elemento,
                                                   file
-                                                )
+                                                ) & 
+                                                ReadDBIndividualDataFile( 
+                                                  elemento,
+                                                  file)
                                               }
                                             >
-                                              <NestedTd>{elemento.date}</NestedTd>
-                                              <NestedTd>{elemento.time}</NestedTd>
-                                              <NestedTd>{elemento.partnb}</NestedTd>
-                                              <NestedTd>{elemento.orden}</NestedTd>
+                                              <NestedTd isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{elemento.date}</NestedTd>
+                                              <NestedTd isSelected={selectedRow === index} onClick={() => handleRowClick(index)}>{elemento.time}</NestedTd>
+                                              <NestedTd isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{elemento.partnb}</NestedTd>
+                                              <NestedTd isSelected={selectedRow === index} onClick={() => handleRowClick(index)}>{elemento.orden}</NestedTd>
                                             </tr>
                                           ))}
                                       </tbody>

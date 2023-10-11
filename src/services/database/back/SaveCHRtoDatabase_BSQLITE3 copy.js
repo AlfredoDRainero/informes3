@@ -10,7 +10,7 @@ async function saveContenidoDataToDB(data, partnb, dbPath) {
     const columnNames = data[0].map((columnName) => columnName);
 
     /* const createTableStmt = `
-      CREATE TABLE IF NOT EXISTS mediciones (
+      CREATE TABLE IF NOT EXISTS measurement (
         id INTEGER PRIMARY KEY,
         partnb TEXT,
         ${columnNames.map((column) => `${column} TEXT`).join(', ')}
@@ -32,7 +32,7 @@ async function saveContenidoDataToDB(data, partnb, dbPath) {
       console.log("dbPath:",dbPath)
       //console.log("data:",data)
       const insertStmt = db.prepare(`
-      INSERT INTO mediciones (partnb, ${columnNames.join(", ")})
+      INSERT INTO measurement (partnb, ${columnNames.join(", ")})
       VALUES (?, ${Array(columnNames.length).fill("?").join(", ")})
     `);
 

@@ -75,7 +75,7 @@ async function readFilesInFolder(dbFolderPath) {
 
 
 
-async function readFileData(dbFolderPath, fileName) {
+async function readFilesData(dbFolderPath, fileName) {
   return new Promise((resolve, reject) => {
     try {
       const filePath = path.join(dbFolderPath, fileName);
@@ -143,7 +143,71 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
         } else {
           console.log("Conexión exitosa a la base de datos");
 
-          const stmt = db.prepare('SELECT * FROM mediciones WHERE partnb = ?');
+          const stmt = db.prepare('SELECT * FROM measurement WHERE partnb = ?');
+
+          stmt.all(partnb, (err, rows) => {
+            if (err) {
+              console.error("Error al ejecutar la consulta:", err.message);
+              reject(err);
+            } else {
+              console.log("Consulta exitosa");
+
+              
+              //-------------------------------------------------
+              //--- CALCULO DE LA DESVIACION O DIFERENCIA -------
+              //-------------------------------------------------
+              rows.forEach((row) => {
+                // Acceso a la columna por índice
+                const actual = row[Object.keys(row)[4]];
+                const nominal = row[Object.keys(row)[5]];
+                actual > nominal ? 
+                row.dif = Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(3):
+                row.dif = Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(3) * (-1);
+                 // Agregar el campo "dif" a cada fila 
+              });
+
+              const result = { data: rows };
+              stmt.finalize(); // Finaliza la declaración después de su uso
+              db.close((err) => {
+                if (err) {
+                  console.error("Error al cerrar la base de datos:", err.message);
+                  reject(err);
+                } else {
+                  console.log("Base de datos cerrada");
+                  resolve(result); // Resuelve la promesa con el resultado
+                }
+              });
+            }
+          });
+        }
+      });
+
+    } catch (error) {
+      console.error("Error al leer el archivo:", error);
+      reject(error);
+    }
+  });
+}
+
+async function readFileData(dbFolderPath, fileName, partnb) {
+  return new Promise((resolve, reject) => {
+    try {
+      const filePath = path.join(dbFolderPath, fileName);
+
+      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
+      }
+
+      console.log("filePath:", filePath);
+
+      const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
+        if (err) {
+          console.error("Error al abrir la base de datos:", err.message);
+          reject(err);
+        } else {
+          console.log("Conexión exitosa a la base de datos");
+
+          const stmt = db.prepare('SELECT * FROM title WHERE partnb = ?');
 
           stmt.all(partnb,(err, rows) => {
             if (err) {
@@ -176,9 +240,9 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
 }
 
 
-
 module.exports = {
   readFilesInFolder,
+  readFilesData,
   readFileData,
   readFileMeasurement
 };

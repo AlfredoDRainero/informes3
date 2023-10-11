@@ -76,7 +76,7 @@ function TablaPrincipal() {
     <Table>
       <TableHead>
         <tr>
-          {columnas.map((columna, index) => (
+        {columnas.slice(1).map((columna, index) => (
             <TableHeaderCell key={index}>{columna}</TableHeaderCell>
           ))}
         </tr>
@@ -84,7 +84,7 @@ function TablaPrincipal() {
       <tbody>
         {measurementFile.map((fila, index) => (
           <TableRow key={index}>
-            {columnas.map((columna, columnIndex) => (
+            {columnas.slice(1).map((columna, columnIndex) => ( // Comenzamos desde el índice 1
               <TableCell key={columnIndex}>{fila[columna]}</TableCell>
             ))}
           </TableRow>

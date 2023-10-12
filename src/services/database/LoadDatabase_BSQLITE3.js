@@ -155,6 +155,7 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
               
               
               rows.forEach((row) => {
+
                 //-------------------------------------------------
                 //--- CALCULO DE LA DESVIACION O DIFERENCIA -------
                 //-------------------------------------------------
@@ -170,30 +171,45 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
                 //--- CALCULO DE LA SIGNOS Y SOBRE TOLERANCIA -----
                 //-------------------------------------------------
                 const tolSup = parseFloat(row[Object.keys(row)[6]]);
-                const tolInf = row[Object.keys(row)[7]];
+                const tolInf = parseFloat(row[Object.keys(row)[7]]); 
+                let signoIntervalo = "";  
+                let colorIntervalo = "";
 
-                //const tolSup = parseFloat(row[Object.keys(row)[6]]);
-
-                const valorX = row.dif // Define el valor de valorX
-
-                const intervalo = tolSup / 4;
-
-                // Calcula en qué intervalo cae valorX
-                let intervaloMensaje = "fuera de los intervalos";
-
-                if (valorX >= 0 && valorX < intervalo) {
-                  intervaloMensaje = "+";
-                } else if (valorX >= intervalo && valorX < 2 * intervalo) {
-                  intervaloMensaje = "++";
-                } else if (valorX >= 2 * intervalo && valorX < 3 * intervalo) {
-                  intervaloMensaje = "+++";
-                } else if (valorX >= 3 * intervalo && valorX <= tolSup) {
-                  intervaloMensaje = "++++";
+                if (row.dif > 0 && row.dif < tolSup / 4) {
+                  signoIntervalo = "+";
+                  colorIntervalo = "G";
+                } else if (row.dif >= tolSup / 4 && row.dif < 2 * tolSup / 4) {
+                  signoIntervalo = "++";
+                  colorIntervalo = "G";
+                } else if (row.dif >= 2 * tolSup / 4 && row.dif < 3 * tolSup / 4) {
+                  signoIntervalo = "+++";
+                  colorIntervalo = "G";
+                } else if (row.dif >= 3 * tolSup / 4 && row.dif <= tolSup) {
+                  signoIntervalo = "++++";
+                  colorIntervalo = "A";
+                } else if (row.dif < 0 && row.dif > tolInf / 4) {
+                  signoIntervalo = "-";
+                  colorIntervalo = "G";
+                } else if (row.dif <= tolInf / 4 && row.dif > 2 * tolInf / 4) {
+                  signoIntervalo = "--";
+                  colorIntervalo = "G";
+                } else if (row.dif <= 2 * tolInf / 4 && row.dif > 3 * tolInf / 4) {
+                  signoIntervalo = "---";
+                  colorIntervalo = "G";
+                } else if (row.dif <= 3 * tolInf / 4 && row.dif >= tolInf) {
+                  signoIntervalo = "----";
+                  colorIntervalo = "A";
+                } else if ( row.dif <= tolInf){
+                  signoIntervalo = (Math.abs(tolInf) + row.dif).toFixed(3);
+                  colorIntervalo = "R";
+                } else if ( row.dif >= tolSup){
+                  signoIntervalo = (row.dif - Math.abs(tolSup)).toFixed(3); 
+                  colorIntervalo = "R";
                 }
 
-                console.log(`valorX está ${intervaloMensaje}`);
+                row.exc = signoIntervalo;
+                row.c = colorIntervalo;
 
-                row.exc = intervaloMensaje;
               });
 
 

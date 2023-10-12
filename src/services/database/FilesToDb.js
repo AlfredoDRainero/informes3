@@ -49,6 +49,7 @@ async function waitUntilFilesRemoved(ubicacion) {
 const userData = app.getAppPath(); // Obtén la ubicación de la aplicación
 
 async function SaveFilesToDB(ubicacion) {
+
   let auxContador = 0;
   console.log("ubicacion:", ubicacion, "userData", userData);
   const archivos = fs
@@ -74,10 +75,11 @@ async function SaveFilesToDB(ubicacion) {
       fs.writeFileSync(dbPath, ""); // Crear archivo vacío
     }
 
+    //console.log(quitarAcentos("Hóla Cáma ígual"))
     //---------------graba contenido
     let contenido = fs.readFileSync(path.join(ubicacion, archivo), "utf8");
     let tituloToDB = splitTextTitulo(Titulo, partNumber);
-
+     
     //funcionando
     try {
       await saveTituloDataToDB(tituloToDB, dbPath);
@@ -95,7 +97,7 @@ async function SaveFilesToDB(ubicacion) {
       console.log("-- Error --");
     }
 
-    console.log("contando:", auxContador);
+    //console.log("contando:", auxContador);
     auxContador++;
     partNumber++;
   }
@@ -121,3 +123,5 @@ module.exports = {
 Al llamar a una función async, se obtiene una promesa que representa la ejecución de la función. Esto permite utilizar métodos 
 como .then() y .catch() para manejar la resolución o el rechazo de la promesa devuelta por la función async.
  */
+
+

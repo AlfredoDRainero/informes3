@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useMyContext } from "../contexts/MyContext";
+import { useMyContext } from "../../contexts/MyContext";
 import styled from "styled-components";
 
 const TableContainer = styled.div`

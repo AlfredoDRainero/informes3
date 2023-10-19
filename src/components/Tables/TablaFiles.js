@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { RequestMsj } from "../../SendAndReceiveData";
 import { useMyContext } from "../../contexts/MyContext";
@@ -19,7 +19,6 @@ const Th = styled.th`
   background-color: #08D9D6;
   color: #252A34;
   padding: 5px;
- // border: 1px solid #252A34;
 `;
 
 const Td = styled.td`
@@ -118,15 +117,7 @@ function FileListTable() {
   }, [msj]);  
 
 
-  /*const handleRowClick = (index) => {
-    if (expandedRow === index) {
-      setExpandedRow(null); // Si la fila ya está expandida, ciérrala
-    } else {
-      setExpandedRow(index); // De lo contrario, expande la fila haciendo clic en ella
-    }
-  };*/
-
-  async function readDBfiles(archivo) {
+ async function readDBfiles(archivo) {
     try {
       const consulta = { MSJREQUEST: "F", DATO1: archivo };
       const result = await RequestMsj(consulta);

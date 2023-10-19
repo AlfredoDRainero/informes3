@@ -6,6 +6,7 @@ const { SaveFilesToDB } = require("./services/database/FilesToDb");
 
 const {
   readFilesInFolder,
+  readFilesDataWithDay,
   readFilesData,
   readFileData,
   readFileMeasurement
@@ -13,7 +14,10 @@ const {
 
 const path = require("path");
 
-const { buscarArchivosEnCarpeta } = require("./services/files/files");
+const { 
+  buscarArchivosEnCarpeta,
+  SearchFilesFolderByYearMonth
+ } = require("./services/files/files");
 
 
 
@@ -86,8 +90,11 @@ ipcMain.on("msjToMainName", async (event, request) => {
     E: () => {return buscarArchivosEnCarpeta();},
     F: () => {try { return recoverDataFilesfromDBFile(request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}, //datos de filas  
     G: () => {try { return recoverMeasurementsFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}},//medidas de un archivo
-    H: () => {try { return recoverDataFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}} //datos de un archivo
-  };
+    H: () => {try { return recoverDataFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}, //datos de un archivo
+    I: () => {try { return recoverDataFilesfromDBFiles(SearchFilesFolderByYearMonth("2023","9"),"2023-9-11");// year/month/day
+    } catch (error) { 
+      console.error("Error:", error); throw error;}}, //datos de filas 
+    };
 
   const REQUEST_DEFAULT = "-NULL-";
 
@@ -101,17 +108,61 @@ ipcMain.on("msjToMainName", async (event, request) => {
 });
 
 
+
+
+async function recoverDataFilesfromDBFiles(dbFiles,dayQuery) {
+  try {
+    console.log("dbFiles:",dbFiles)
+    const userData = app.getAppPath();
+    const dbFolder = path.join(userData, './data/');
+    const resultObj = {};
+    for (const key in dbFiles) {
+      if (dbFiles.hasOwnProperty(key)) {
+        const dbFile = dbFiles[key];
+        console.log("--dbFile:",dbFile)
+        const dbFileString = dbFile.nombre;
+        const fileData = await readFilesDataWithDay(dbFolder, dbFileString,dayQuery);
+        console.log("-------------------fileData:",fileData)
+        resultObj[key] = fileData;
+      }
+      
+    }
+
+    //-----------esto solo es para imprimir en consola para chequear que se cargo.. despues borrar----
+    for (const key in resultObj) {
+      if (resultObj.hasOwnProperty(key)) {
+        const data = resultObj[key].data;
+    
+        console.log(`Contenido de resultObj['${key}']:`);
+        data.forEach((element, index) => {
+          console.log(`  Elemento ${index}:`, element);
+        });
+      }
+    }
+    //-----------------------------------------------------------------------
+
+    return resultObj;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+
+
 async function recoverDataFilesfromDBFile(dbFile) {
   try {    
     const userData = app.getAppPath();
     const dbFolder = path.join(userData, './data/');    
     const fileData = await readFilesData(dbFolder, dbFile);
+    console.log("-------------------fileData:",fileData)
     return fileData;
   } catch (error) {
     console.error("Error:", error);
     throw error;
   }
 }
+
 
 async function recoverMeasurementsFromDBFileAndPartnb(dbFile,partnb) {
   try {    

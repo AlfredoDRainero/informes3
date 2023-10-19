@@ -4,13 +4,13 @@ import styled, { keyframes } from "styled-components";
 
 //components
 import BurgerButton from "./components/BurgerButton";
-import FileListTable from "./components/TableFiles/TablaFiles";
+import FileListTable from "./components/Tables/TablaFiles";
 import { RequestMsj } from "./SendAndReceiveData";
 import { MyContextProvider } from "./contexts/MyContext";
 
 import MyComponent from "./components/MyComponentTest";
-import TablaPrincipal from "./components/TablaPrincipal";
-import TablaDatos from "./components/TablaDatos";
+import TablaPrincipal from "./components/Tables/TablaMeasurement";
+import TablaDatos from "./components/Tables/TablaDatos";
 
 const MainDiv = styled.div`
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -122,22 +122,13 @@ const RightBottomContainer = styled.div`
 `;
 
 const FileListTopMenu = styled.div`
-  //overflow-y: auto;
   width: 100%;
-  //height: 100%;
   background-color: #7a7d85;
- 
-
   display: flex;
   flex-direction: row;
-  //flex-grow: 0.1;
-
-  height: 20px; /* Altura de B */
-  //border: 1px solid #000;
-  text-align: center;
-  //box-sizing: border-box;
-
-  
+  height: 30px; /* Altura de B */
+  min-height: 30px;
+  text-align: center;  
 `;
 
 const FileListHijo = styled.div`
@@ -184,34 +175,28 @@ const FileListMenuButton3 = styled.div`
 `;
 
 function App() {
-  const [tablaIndice, setTablaIndice] = useState({ rows: [] });
-
-  //const [fileList, setFileList] = useState(null);
-
-  //-----------------------------------------------------
-  //const [msj3, setMsj3] = useState([]);
-  /*const fileList = [];
-  for (const nombreArchivo in msj) {
-    const elemento = msj[nombreArchivo].nombre;
-    fileList.push(SubStringDateAndFilename(elemento));
-  }
-
-  const nombresUnicos = [...new Set(fileList.map((file) => file.name))];*/
 
   async function FileDataDb() {
     try {
       const consulta3 = { MSJREQUEST: "B" };
       await RequestMsj(consulta3);
-      //setMsj3(newMsj3);
     } catch (error) {
       console.error("Error al obtener el mensaje:", error);
     }
   }
 
-  //---------------------------------------- enviar y recibir
+  async function Prueba() {
+    try {
+      const consulta4 = { MSJREQUEST: "I" };
+      await RequestMsj(consulta4);
+      
+    } catch (error) {
+      console.error("Error al obtener el mensaje:", error);
+    }
+  }
 
   useEffect(() => {
-    const pregunta = { MSJREQUEST: "A", DATO1: "12345", DATO2: "6789" };
+    const pregunta = { MSJREQUEST: "A", DATO1: "test1", DATO2: "test2" };
     RequestMsj(pregunta);
   }, []);
 
@@ -240,7 +225,7 @@ function App() {
                     <FileListMenuButton1>
                       <a>Shift</a>
                     </FileListMenuButton1>
-                    <FileListMenuButton2>
+                    <FileListMenuButton2 onClick={() => Prueba()}>
                       <a>Day</a>
                     </FileListMenuButton2>
                     <FileListMenuButton3>

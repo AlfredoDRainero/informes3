@@ -111,7 +111,9 @@ async function readFilesDataWithDay(dbFolderPath, fileName, dayQuery) {
               reject(err);
             } else {
               console.log("Consulta exitosa");             
-
+              rows.forEach((row) => {
+                row.file = fileName;
+              })
               const result = { data: rows };
               //console.log("********************resulado prueba:",result)
               stmt.finalize(); // Finaliza la declaración después de su uso

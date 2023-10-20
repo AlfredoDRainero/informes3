@@ -124,6 +124,7 @@ async function recoverDataFilesfromDBFiles(dbFiles,dayQuery) {
         const fileData = await readFilesDataWithDay(dbFolder, dbFileString,dayQuery);
         console.log("-------------------fileData:",fileData)
         resultObj[key] = fileData;
+        resultObj[key].file = dbFileString;
       }
       
     }
@@ -137,8 +138,18 @@ async function recoverDataFilesfromDBFiles(dbFiles,dayQuery) {
         data.forEach((element, index) => {
           console.log(`  Elemento ${index}:`, element);
         });
+        
       }
     }
+    
+    for (const key in resultObj) {
+      if (resultObj.hasOwnProperty(key)) {
+        const dbFileString = resultObj[key].file;
+        console.log(dbFileString);
+      }
+    }
+
+    
     //-----------------------------------------------------------------------
 
     return resultObj;

@@ -4,13 +4,17 @@ import styled, { keyframes } from "styled-components";
 
 //components
 import BurgerButton from "./components/BurgerButton";
-import FileListTable from "./components/Tables/TablaFiles";
+
 import { RequestMsj } from "./SendAndReceiveData";
 import { MyContextProvider } from "./contexts/MyContext";
 
 import MyComponent from "./components/MyComponentTest";
 import TablaPrincipal from "./components/Tables/TablaMeasurement";
 import TablaDatos from "./components/Tables/TablaDatos";
+
+import FileListTable from "./components/Tables/TablaFiles";
+import DataTableDay from "./components/Tables/TablaFilesDay";
+
 
 const MainDiv = styled.div`
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -175,6 +179,9 @@ const FileListMenuButton3 = styled.div`
 `;
 
 function App() {
+  const [tableDay, setTableDay] = useState(false);
+  const [tableShift, setTableShift] = useState(false);
+  const [tableFull, setTableFull] = useState(true);
 
   async function FileDataDb() {
     try {
@@ -222,18 +229,20 @@ function App() {
                 <RightBottomContainer>
                   
                   <FileListTopMenu>
-                    <FileListMenuButton1>
+                    <FileListMenuButton1 onClick={() => setTableShift(true) & setTableDay(false) & setTableFull(false)}>
                       <a>Shift</a>
                     </FileListMenuButton1>
-                    <FileListMenuButton2 onClick={() => Prueba()}>
+                    <FileListMenuButton2 onClick={() => setTableShift(false) & setTableDay(true) & setTableFull(false) & Prueba()}>
                       <a>Day</a>
                     </FileListMenuButton2>
-                    <FileListMenuButton3>
+                    <FileListMenuButton3 onClick={() => setTableShift(false) & setTableDay(false) & setTableFull(true)}>
                       <a>Full DataBase</a>
                     </FileListMenuButton3>
                   </FileListTopMenu>
                   <FileListBottom>
-                    <FileListTable />
+                    
+                    {tableFull && (<FileListTable />)}
+                    {tableDay && (<DataTableDay />)}
                   </FileListBottom>
                  
                 </RightBottomContainer>

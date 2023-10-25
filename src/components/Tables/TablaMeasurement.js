@@ -13,11 +13,13 @@ const Table = styled.table`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+      font-size: 14px;
 `;
 
 const TableHead = styled.thead`
   background-color: #222831;
   color: #08d9d6;
+
 `;
 
 const TableRow = styled.tr`

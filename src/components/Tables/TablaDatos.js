@@ -7,6 +7,7 @@ import styled from 'styled-components';
 const TableContainer = styled.div`
   width: 100%;
   overflow-x: auto;
+      font-size: 12px;
 `;
 
 const Table = styled.table`

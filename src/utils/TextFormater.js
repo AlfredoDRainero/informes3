@@ -1,3 +1,6 @@
+
+const { convertTo24HourFormat } = require("../utils/Hour24")
+
 function splitText(text) {
   const rows = text.split("\n"); // Divide el texto en filas utilizando el carácter de nueva línea ('\n')
   const result = []; // Matriz vacía para almacenar el resultado
@@ -51,6 +54,7 @@ function splitTextTitulo(text, partnb) {
 
   //agrega numero que usamos como indice partnb
   datosTituloInformeObj["partnb"] = partnb;
+  console.log("**********************datosTituloInformeObj[time]",convertTo24HourFormat(datosTituloInformeObj["time"]) )
   //console.log("Valores en el objeto datosTituloInformeObj:");
   //console.log(datosTituloInformeObj);
   //console.log(datosTituloInformeObj);

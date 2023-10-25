@@ -91,7 +91,7 @@ ipcMain.on("msjToMainName", async (event, request) => {
     F: () => {try { return recoverDataFilesfromDBFile(request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}, //datos de filas  
     G: () => {try { return recoverMeasurementsFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}},//medidas de un archivo
     H: () => {try { return recoverDataFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}, //datos de un archivo
-    I: () => {try { return recoverDataFilesfromDBFiles(SearchFilesFolderByYearMonth("2023","9"),"2023-9-11");// year/month/day
+    I: () => {try { return recoverDataFilesfromDBFiles(SearchFilesFolderByYearMonth(request.DATO1,request.DATO2),request.DATO1+"-"+request.DATO2+"-"+request.DATO3);// year/month/day
     } catch (error) { 
       console.error("Error:", error); throw error;}}, //datos de filas 
     };

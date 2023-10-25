@@ -13,6 +13,7 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   background-color: #252A34 ;
+  overflow-y: auto; 
 `;
 
 const Th = styled.th`
@@ -128,11 +129,11 @@ function FileListTable() {
     }
   }
 
-async function readDBIndividualMeasurementfile(elemento , file) {
+async function readDBIndividualMeasurementfile(partnb , file) {
   const fileName = file.name + "_" + file.date + ".db";
-  console.log("elemento.partnb",elemento.partnb , fileName)  
+  //console.log("elemento.partnb",elemento.partnb , fileName)  
   try {
-    const consulta = { MSJREQUEST: "G", DATO1: elemento.partnb, DATO2: fileName};
+    const consulta = { MSJREQUEST: "G", DATO1: partnb, DATO2: fileName};
     const result = await RequestMsj(consulta);
     console.log("Esperando a que se resuelva la promesa...", result);
     setMeasurementFile(result.data)
@@ -141,11 +142,11 @@ async function readDBIndividualMeasurementfile(elemento , file) {
   }
 }
 
-async function ReadDBIndividualDataFile(elemento , file) {
+async function ReadDBIndividualDataFile(partnb , file) {
   const fileName = file.name + "_" + file.date + ".db";
-  console.log("elemento.partnb",elemento.partnb , fileName)  
+  //console.log("elemento.partnb",elemento.partnb , fileName)  
   try {
-    const consulta = { MSJREQUEST: "H", DATO1: elemento.partnb, DATO2: fileName};
+    const consulta = { MSJREQUEST: "H", DATO1: partnb, DATO2: fileName};
     const result = await RequestMsj(consulta);
     console.log("Esperando a que se resuelva la promesa...", result);
     setDataFile(result.data)
@@ -181,7 +182,7 @@ const [selectedRow, setSelectedRow] = useState(null);
     <Table>
       <thead>
         <tr>
-          <Th>Nombre de Archivo</Th>
+          <Th>Files</Th>
         </tr>
       </thead>
       <tbody>
@@ -223,13 +224,13 @@ const [selectedRow, setSelectedRow] = useState(null);
                                               key={index}
                                               onClick={() =>
  
-
+                                                //console.log("elementos:",elemento,"file:",file) &
                                                 readDBIndividualMeasurementfile(
-                                                  elemento,
+                                                  elemento.partnb,
                                                   file
                                                 ) & 
                                                 ReadDBIndividualDataFile( 
-                                                  elemento,
+                                                  elemento.partnb,
                                                   file)
                                               }
                                             >

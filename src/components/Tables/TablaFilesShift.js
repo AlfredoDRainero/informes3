@@ -62,7 +62,45 @@ const DataCell = styled.td`
   text-overflow: ellipsis;
 `;
 
-const DataTableDay = () => {
+
+//----------- combo box
+
+const SelectContainer = styled.div`
+  position: relative;
+  //display: inline-block;
+  width: 100%; /* Personaliza el ancho según tus necesidades */
+  border: 1px solid #252a34;
+  
+  background-color: #252a34;
+  background-color: #08d9d6;//#252a34;
+  border: 1px solid #08d9d6;
+  color: #252a34;
+  cursor: pointer;
+`;
+
+const Dropdown = styled.select`
+  width: 50%;
+  height: 100%;
+  padding: 5px;
+
+  
+  border: none;
+  outline: none;
+ // background-color: transparent;
+  background-color: #08d9d6;//#252a34;
+  border: 1px solid #08d9d6;
+  color:#252a34;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+`;
+
+const Option = styled.option`
+  /* Personaliza los estilos de las opciones según tus necesidades */
+`;
+
+
+const DataTableShift = () => {
   const [msj, setMsj] = useState([]);
   const [files, setFiles] = useState([]);
   const [dataFiles, setDataFiles] = useState([]);
@@ -142,11 +180,13 @@ const DataTableDay = () => {
   return (
     <Container>
       <Table>
+      <ComboBox/>
         <thead>
           <tr>
-            <Th>Day's Reports</Th>
+            <Th>Shift's Reports</Th>
           </tr>
         </thead>
+        
         <tbody>
           {files.map((file, index) => (
             <DataRowMain key={index}>
@@ -192,4 +232,30 @@ const DataTableDay = () => {
   );
 };
 
-export default DataTableDay;
+
+const ComboBox = () => {
+  const [selectedValue, setSelectedValue] = useState(''); // Estado para el valor seleccionado
+
+  const handleSelectChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+
+  return (
+    <SelectContainer>
+      <Dropdown value={selectedValue} onChange={handleSelectChange}>
+        <Option value="M1">M1 00:00 - 06:18</Option>
+        <Option value="M2">M2 06:00 - 12:18</Option>
+        <Option value="M3">M3 12:00 - 18:18</Option>
+        <Option value="M4">M4 18:00 - 00:18</Option>
+        <Option value="add">Add new..</Option>
+      </Dropdown>
+    </SelectContainer>
+  );
+};
+
+
+
+
+export default DataTableShift;
+
+

@@ -84,7 +84,7 @@ async function readFilesData(dbFolderPath, fileName) {
   });
 }
 
-async function readFilesDataWithDay(dbFolderPath, fileName, dayQuery) {
+async function readFilesDataWithDay(dbFolderPath, fileName, dayQuery, shiftQuery) {
   //const partnb = '30986'
   return new Promise((resolve, reject) => {
     try {
@@ -93,7 +93,8 @@ async function readFilesDataWithDay(dbFolderPath, fileName, dayQuery) {
       if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
         throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
       }
-
+      
+      
       //console.log("filePath:", filePath);
 
       const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
@@ -102,10 +103,16 @@ async function readFilesDataWithDay(dbFolderPath, fileName, dayQuery) {
           reject(err);
         } else {
           console.log("Conexión exitosa a la base de datos");
-
-          const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? ');
-
-          stmt.all(dayQuery, (err, rows) => {
+          
+          
+          //const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? ');
+          const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? AND time >= ? AND time <= ?');
+          
+          const variableA = shiftQuery.HRSTART
+          const variableB = shiftQuery.HREND
+          
+          //stmt.all(dayQuery,   (err, rows) => { 
+          stmt.all(dayQuery, variableA, variableB,  (err, rows) => {
             if (err) {
               console.error("Error al ejecutar la consulta:", err.message);
               reject(err);

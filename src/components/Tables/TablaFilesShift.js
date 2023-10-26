@@ -62,7 +62,6 @@ const DataCell = styled.td`
   text-overflow: ellipsis;
 `;
 
-
 //----------- combo box
 
 const SelectContainer = styled.div`
@@ -70,9 +69,9 @@ const SelectContainer = styled.div`
   //display: inline-block;
   width: 100%; /* Personaliza el ancho según tus necesidades */
   border: 1px solid #252a34;
-  
+
   background-color: #252a34;
-  background-color: #08d9d6;//#252a34;
+  background-color: #08d9d6; //#252a34;
   border: 1px solid #08d9d6;
   color: #252a34;
   cursor: pointer;
@@ -83,13 +82,12 @@ const Dropdown = styled.select`
   height: 100%;
   padding: 5px;
 
-  
   border: none;
   outline: none;
- // background-color: transparent;
-  background-color: #08d9d6;//#252a34;
+  // background-color: transparent;
+  background-color: #08d9d6; //#252a34;
   border: 1px solid #08d9d6;
-  color:#252a34;
+  color: #252a34;
   cursor: pointer;
   font-size: 15px;
   font-weight: bold;
@@ -99,11 +97,12 @@ const Option = styled.option`
   /* Personaliza los estilos de las opciones según tus necesidades */
 `;
 
-
 const DataTableShift = () => {
   const [msj, setMsj] = useState([]);
   const [files, setFiles] = useState([]);
   const [dataFiles, setDataFiles] = useState([]);
+
+  const [selectedShift, setSelectedShift] = useState({});
 
   const { setMeasurementFile } = useMyContext();
   const { setDataFile } = useMyContext();
@@ -120,7 +119,8 @@ const DataTableShift = () => {
         MSJREQUEST: "I",
         DATO1: "2023", //year,
         DATO2: "9", //month,
-        DATO3: "11" //day
+        DATO3: "11", //day
+        DATO4: selectedShift //hour Start And End
       };
       const newMsj = await RequestMsj(consulta);
       setMsj(newMsj);
@@ -152,12 +152,20 @@ const DataTableShift = () => {
   useEffect(() => {
     fetchData();
   }, []); // Este useEffect se ejecuta solo cuando el componente se monta
-  useEffect(() => {}, [msj]);
 
+  useEffect(() => {
+    fetchData();
+  }, [selectedShift]); 
+
+  useEffect(() => {}, [msj]);
 
   async function readDBIndividualMeasurementfile(partnb, file) {
     try {
-      const consulta = { MSJREQUEST: "G", DATO1: partnb, DATO2: file };
+      const consulta = {
+        MSJREQUEST: "G",
+        DATO1: partnb,
+        DATO2: file
+      };
       const result = await RequestMsj(consulta);
       console.log("Esperando a que se resuelva la promesa...", result);
       setMeasurementFile(result.data);
@@ -168,7 +176,11 @@ const DataTableShift = () => {
 
   async function ReadDBIndividualDataFile(partnb, file) {
     try {
-      const consulta = { MSJREQUEST: "H", DATO1: partnb, DATO2: file };
+      const consulta = {
+        MSJREQUEST: "H",
+        DATO1: partnb,
+        DATO2: file
+      };
       const result = await RequestMsj(consulta);
       console.log("Esperando a que se resuelva la promesa...", result);
       setDataFile(result.data);
@@ -177,16 +189,25 @@ const DataTableShift = () => {
     }
   }
 
+
+
+  useEffect(() => {
+    console.log("selectedShift:", selectedShift);
+  });
+
   return (
     <Container>
       <Table>
-      <ComboBox/>
+        <ComboBox
+          setSelectedShift={setSelectedShift}
+          selectedShift={selectedShift}
+        />
         <thead>
           <tr>
             <Th>Shift's Reports</Th>
           </tr>
         </thead>
-        
+
         <tbody>
           {files.map((file, index) => (
             <DataRowMain key={index}>
@@ -210,7 +231,11 @@ const DataTableShift = () => {
                             readDBIndividualMeasurementfile(
                               dataFile.partnb,
                               file
-                            ) & ReadDBIndividualDataFile(dataFile.partnb, file)
+                            ) &
+                            ReadDBIndividualDataFile(
+                              dataFile.partnb,
+                              file
+                            )
                           }
                         >
                           <DataCell>{dataFile.orden}</DataCell>
@@ -232,30 +257,34 @@ const DataTableShift = () => {
   );
 };
 
+const ComboBox = ({ selectedShift, setSelectedShift }) => {
+  // <ComboBox setSelectedValue={setSelectedValue} selectedValue={selectedValue}/>
 
-const ComboBox = () => {
-  const [selectedValue, setSelectedValue] = useState(''); // Estado para el valor seleccionado
+  //const [selectedValue, setSelectedValue] = useState(""); // Estado para el valor seleccionado
 
   const handleSelectChange = (event) => {
-    setSelectedValue(event.target.value);
+    setSelectedShift(separarHoras(event.target.value));
   };
+
+  function separarHoras(cadena) {
+    const HRSTART = cadena.slice(0, 5);
+    const HREND = cadena.slice(-5);
+    const VALUE = event.target.value;
+
+    return { HRSTART, HREND, VALUE };
+  }
 
   return (
     <SelectContainer>
-      <Dropdown value={selectedValue} onChange={handleSelectChange}>
-        <Option value="M1">M1 00:00 - 06:18</Option>
-        <Option value="M2">M2 06:00 - 12:18</Option>
-        <Option value="M3">M3 12:00 - 18:18</Option>
-        <Option value="M4">M4 18:00 - 00:18</Option>
+      <Dropdown value={selectedShift.VALUE} onChange={handleSelectChange}>
+        <Option value="00:00-06:18">M1 00:00 - 06:18</Option>
+        <Option value="06:00-12:18">M2 06:00 - 12:18</Option>
+        <Option value="12:00-18:18">M3 12:00 - 18:18</Option>
+        <Option value="18:00-00:18">M4 18:00 - 00:18</Option>
         <Option value="add">Add new..</Option>
       </Dropdown>
     </SelectContainer>
   );
 };
 
-
-
-
 export default DataTableShift;
-
-

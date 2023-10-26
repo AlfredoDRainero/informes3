@@ -70,6 +70,10 @@ const DataTableDay = () => {
   const { setMeasurementFile } = useMyContext();
   const { setDataFile } = useMyContext();
 
+  const [selectedShift, setSelectedShift] = useState({HRSTART:'00:00:00',HREND:'23:59:59'});
+
+
+
   async function fetchData() {
     try {
       const fechaActual = new Date(); // Obtiene la fecha y hora actual
@@ -82,7 +86,8 @@ const DataTableDay = () => {
         MSJREQUEST: "I",
         DATO1: "2023", //year,
         DATO2: "9", //month,
-        DATO3: "11" //day
+        DATO3: "11", //day
+        DATO4: selectedShift
       };
       const newMsj = await RequestMsj(consulta);
       setMsj(newMsj);

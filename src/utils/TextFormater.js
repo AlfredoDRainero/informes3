@@ -54,7 +54,8 @@ function splitTextTitulo(text, partnb) {
 
   //agrega numero que usamos como indice partnb
   datosTituloInformeObj["partnb"] = partnb;
-  console.log("**********************datosTituloInformeObj[time]",convertTo24HourFormat(datosTituloInformeObj["time"]) )
+  datosTituloInformeObj["time"] = convertTo24HourFormat(datosTituloInformeObj["time"])
+  //console.log("**********************datosTituloInformeObj[time]",convertTo24HourFormat(datosTituloInformeObj["time"]) )
   //console.log("Valores en el objeto datosTituloInformeObj:");
   //console.log(datosTituloInformeObj);
   //console.log(datosTituloInformeObj);

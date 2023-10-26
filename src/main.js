@@ -89,9 +89,22 @@ ipcMain.on("msjToMainName", async (event, request) => {
     D: () => {},
     E: () => {return buscarArchivosEnCarpeta();},
     F: () => {try { return recoverDataFilesfromDBFile(request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}, //datos de filas  
-    G: () => {try { return recoverMeasurementsFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}},//medidas de un archivo
-    H: () => {try { return recoverDataFromDBFileAndPartnb(request.DATO2, request.DATO1);} catch (error) { console.error("Error:", error); throw error;}}, //datos de un archivo
-    I: () => {try { return recoverDataFilesfromDBFiles(SearchFilesFolderByYearMonth(request.DATO1,request.DATO2),request.DATO1+"-"+request.DATO2+"-"+request.DATO3);// year/month/day
+    G: () => {try { return recoverMeasurementsFromDBFileAndPartnb(
+      request.DATO2, 
+      request.DATO1, 
+      request.DATO3);} catch (error) { console.error("Error:", error); throw error;}},//medidas de un archivo
+      
+    H: () => {try { return recoverDataFromDBFileAndPartnb(
+      request.DATO2, 
+      request.DATO1, 
+      request.DATO3);} catch (error) { console.error("Error:", error); throw error;}}, //datos de un archivo
+
+    I: () => {try { return recoverDataFilesfromDBFiles(SearchFilesFolderByYearMonth(
+      request.DATO1,
+      request.DATO2),
+      request.DATO1+"-"+request.DATO2+"-"+request.DATO3,
+      request.DATO4);// year/month/day
+
     } catch (error) { 
       console.error("Error:", error); throw error;}}, //datos de filas 
     };
@@ -110,7 +123,7 @@ ipcMain.on("msjToMainName", async (event, request) => {
 
 
 
-async function recoverDataFilesfromDBFiles(dbFiles,dayQuery) {
+async function recoverDataFilesfromDBFiles(dbFiles,dayQuery,shiftQuery) {
   try {
     console.log("dbFiles:",dbFiles)
     const userData = app.getAppPath();
@@ -119,10 +132,10 @@ async function recoverDataFilesfromDBFiles(dbFiles,dayQuery) {
     for (const key in dbFiles) {
       if (dbFiles.hasOwnProperty(key)) {
         const dbFile = dbFiles[key];
-        console.log("--dbFile:",dbFile)
+        //console.log("--dbFile:",dbFile)
         const dbFileString = dbFile.nombre;
-        const fileData = await readFilesDataWithDay(dbFolder, dbFileString,dayQuery);
-        console.log("-------------------fileData:",fileData)
+        const fileData = await readFilesDataWithDay(dbFolder, dbFileString,dayQuery,shiftQuery);
+        //console.log("-------------------fileData:",fileData)
         resultObj[key] = fileData;
         resultObj[key].file = dbFileString;
       }

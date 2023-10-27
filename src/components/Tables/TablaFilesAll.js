@@ -14,12 +14,15 @@ const Table = styled.table`
   border-collapse: collapse;
   background-color: #252A34 ;
   overflow-y: auto; 
+  font-size: 12px;
+  //background-color: red;
 `;
 
 const Th = styled.th`
   background-color: #08D9D6;
   color: #252A34;
   padding: 5px;
+  font-size: 15px;
 `;
 
 const Td = styled.td`
@@ -30,7 +33,12 @@ const Td = styled.td`
   text-overflow: ellipsis;
   color: #EAEAEA;
   background-color: #252A34 ;
- 
+  transition: background-color 0.3s;
+
+
+&:hover { 
+   color: #08d9d6;
+ }
 `;
 
 const NestedTable = styled.table`
@@ -45,11 +53,18 @@ const NestedTd = styled.td`
   //border: 1px solid #252A34;
   color: #EAEAEA;
   background-color: ${(props) => (props.isSelected ? "#0088FF" : "#252A34")};
+    transition: background-color 0.3s;
+
+&:hover { 
+   color: #08d9d6;
+ }
 `;
 
 const NestedSubTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+  
+ 
 `;
 
 const SubTableRow = styled.tr`
@@ -191,7 +206,7 @@ const [selectedRow, setSelectedRow] = useState(null);
             <tr onClick={() => setExpandedRow(index) & setShowDF(false)}>
               <Td>
                 {nombre}
-                <div style={{ margin: "5px" }}>
+                <div style={{ margin: "1px" }}>
                   <NestedTable>
                     <tbody>
                       {expandedRow === index &&

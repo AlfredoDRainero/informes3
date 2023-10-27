@@ -16,6 +16,31 @@ import FileListTable from "./components/Tables/TablaFilesAll";
 import DataTableDay from "./components/Tables/TablaFilesDay";
 import DataTableShift from "./components/Tables/TablaFilesShift";
 
+import { createGlobalStyle } from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+  /* Estilo del contenedor de la barra de desplazamiento */
+  ::-webkit-scrollbar {
+    width: 10px; /* Ancho de la barra de desplazamiento */
+    
+  }
+
+  /* Estilo del pulgar de la barra de desplazamiento */
+  ::-webkit-scrollbar-thumb {
+    background-color: gray; /* Cambia el color de la barra de desplazamiento */
+   // border-radius: 2px; /* Bordes redondeados del pulgar */
+  }
+
+  /* Estilo de la barra de desplazamiento en hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color:  #08d9d6; /* Cambia el color en hover */
+    border: 1px solid #08d9d6;
+   
+  }
+`;
+
+
+
 const MainDiv = styled.div`
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   background-color: #d1d1d1;
@@ -76,16 +101,18 @@ const TopContainer = styled.div`
   flex-grow: 0.1;
   background-color: #252a34;
   display: grid;
-  grid-template-columns: 65% 35%;
+  grid-template-columns: 70% 30%;
   align-items: end;
 `;
 
 const BottomContainer = styled.div`
   display: grid;
-  grid-template-columns: 65% 35%;
+  grid-template-columns: 70% 30%;
   flex-grow: 1;
   overflow-y: auto;
 `;
+
+
 
 const LeftBottomContainer = styled.div`
   overflow-y: auto;
@@ -95,7 +122,9 @@ const LeftBottomContainer = styled.div`
   background-color: #252a34;
 `;
 
-const RightBottomContainer = styled.div`
+
+const BottomRightTopContainer = styled.div`
+  
   overflow-y: auto;
   width: 100%;
   background-color: #252a34;
@@ -104,6 +133,38 @@ const RightBottomContainer = styled.div`
   flex-direction: column;
   flex: 1;
   //overflow-y: hidden;
+`;
+
+const BottomRightBottomContainer = styled.div`
+  
+  overflow-y: auto;
+  width: 100%;
+  background-color: #252a34;
+  height: calc(100% - 1px);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+    border-width: 1px;
+  border-style: solid;
+  //border:none;
+  //border-top: #dddddd;
+  border-top-color: #dddddd;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  color:#dddddd;
+`;
+
+const RightBottomContainer = styled.div`
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-rows: 70% 30%;
+  flex-grow: 1;
+  overflow-y: auto;
+ 
 `;
 
 const FileListTopMenu = styled.div`
@@ -137,6 +198,7 @@ const FileListMenuButton1 = styled.div`
     background-color: #08d9d6; /* Cambia el color de fondo en hover */
     color: #252a34;
   }
+  border-left: none;
   border-bottom: ${(props) => (props.isActive ? "none" : "1px solid #222831")};
   background-color: ${(props) => (props.isActive ? "#08d9d6" : "#7a7d85")};
 `;
@@ -154,6 +216,7 @@ const FileListMenuButton2 = styled.div`
     background-color: #08d9d6; /* Cambia el color de fondo en hover */
     color: #252a34;
   }
+  border-left: none;
   border-bottom: ${(props) => (props.isActive ? "none" : "1px solid #222831")};
   background-color: ${(props) => (props.isActive ? "#08d9d6" : "#7a7d85")};
 `;
@@ -171,12 +234,10 @@ const FileListMenuButton3 = styled.div`
     background-color: #08d9d6; /* Cambia el color de fondo en hover */
     color: #252a34;
   }
+  border-left: none;
   border-bottom: ${(props) => (props.isActive ? "none" : "1px solid #222831")};
   background-color: ${(props) => (props.isActive ? "#08d9d6" : "#7a7d85")};
 `;
-
-
-
 
 function App() {
   const [tableDay, setTableDay] = useState(false);
@@ -232,9 +293,18 @@ function App() {
 
   return (
     <>
+    <GlobalStyle />
       <MyContextProvider>
         <MainDiv>
           <div style={{ display: "flex" }}>
+          <Sider>
+              <BurgerButton />
+               {/*<MyComponent />*/}              
+              <MenuIcon>Imp</MenuIcon>
+              <MenuIcon onClick={() => FileDataDb()}>Save</MenuIcon>
+              <MenuIcon>📂</MenuIcon>
+              
+            </Sider>
             <GridContainer>
               <TopContainer>
                 <TablaDatos />
@@ -281,22 +351,18 @@ function App() {
                   <TablaPrincipal />
                 </LeftBottomContainer>
                 <RightBottomContainer>
-                  <FileListBottom>
+                  <BottomRightTopContainer>
                     {tableFull && <FileListTable />}
                     {tableDay && <DataTableDay />}
                     {tableShift && <DataTableShift />}
-                  </FileListBottom>
+                    </BottomRightTopContainer>
+                  <BottomRightBottomContainer>
+                    Graficos
+                  </BottomRightBottomContainer>
                 </RightBottomContainer>
               </BottomContainer>
             </GridContainer>
-            <Sider>
-              <MyComponent />
-              {/* Menú */}
-              <MenuIcon>☰</MenuIcon>
-              <MenuIcon onClick={() => FileDataDb()}>SaveToDB</MenuIcon>
-              <MenuIcon>📂</MenuIcon>
-              <BurgerButton />
-            </Sider>
+          
           </div>
         </MainDiv>
       </MyContextProvider>

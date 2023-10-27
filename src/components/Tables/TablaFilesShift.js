@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   color: white;
-  overflow-x: auto;
+  //overflow-x: auto;
   //overflow-y: auto;
   //height:calc(100% - 4  0px);
 `;
@@ -18,27 +18,37 @@ const Table = styled.table`
 
 const HeaderCell = styled.th`
   font-size: 12px;
-  background-color: black;
+  //background-color: black;
   width: 100%;
 `;
 const FileNameCell = styled.p`
+  grid-template-columns: 20px 1fr;
   display: grid;
   justify-items: center;
   align-items: center;
   justify-content: center;
   align-content: center;
   text-justify: center;
-  background-color: Black;
+  background-color: rgb(51,61,74,0.5);
   font-size: 12px;
-  height: 40px;
+  height: 20px;
   width: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: rgb(210,210,210,1);
 `;
 const DataRow = styled.tr`
-  background-color: #252a34;
+  //background-color: #252a34;
+  font-size: 12px;
+  transition: background-color 0.3s;
+
+&:hover { 
+   color: #08d9d6;
+ }
+ 
 `;
+
 
 const Th = styled.th`
   background-color: #08d9d6;
@@ -58,39 +68,49 @@ const DataCell = styled.td`
   width: 30%;
   height: 10px;
   white-space: nowrap;
-  overflow: hidden;
+  //overflow: hidden;
   text-overflow: ellipsis;
+  background-color: ${(props) => (props.isSelected ? "#0088FF" : "#252A34")};
 `;
 
 //----------- combo box
 
 const SelectContainer = styled.div`
   position: relative;
-  //display: inline-block;
-  width: 100%; /* Personaliza el ancho según tus necesidades */
-  border: 1px solid #252a34;
-
+  width: 100%; 
   background-color: #252a34;
-  background-color: #08d9d6; //#252a34;
-  border: 1px solid #08d9d6;
   color: #252a34;
   cursor: pointer;
+  display: grid;
+  justify-content: center;
+  margin-top: 20px;
+  margin-top: 10px;
+
+  
+
 `;
 
 const Dropdown = styled.select`
-  width: 50%;
-  height: 100%;
+  width: 100%;
+  height: 30px;
   padding: 5px;
-
   border: none;
   outline: none;
-  // background-color: transparent;
   background-color: #08d9d6; //#252a34;
-  border: 1px solid #08d9d6;
+  background-color: #252a34;
+  //border: 1px solid #08d9d6;
   color: #252a34;
+  color:#dddddd;
   cursor: pointer;
   font-size: 15px;
-  font-weight: bold;
+  transition: background-color 0.3s;
+
+ &:hover {
+    background-color: #08d9d6; /* Cambia el color de fondo en hover */
+    color: #252a34;
+    //color:#08d9d6;
+    //border: 1px solid #08d9d6;
+  }
 `;
 
 const Option = styled.option`
@@ -189,10 +209,20 @@ const DataTableShift = () => {
     }
   }
 
+  const [selectedRow, setSelectedRow] = useState(null);
 
+  const handleRowClick = (index) => {
+    if (selectedRow === index) {
+      setSelectedRow(null);
+      
+    } else {
+      setSelectedRow(index);
+      
+    }
+  };
 
   useEffect(() => {
-    console.log("selectedShift:", selectedShift);
+    console.log("selectedRow:",selectedRow)
   });
 
   return (
@@ -213,20 +243,20 @@ const DataTableShift = () => {
             <DataRowMain key={index}>
               <DataCell>
                 <FileNameCell>
-                  <p>{file}</p>
+                <p style={{color:"#08d9d6"}}>■</p><p>{file}</p>
                 </FileNameCell>
-                <DataRow>
+                <tr>
                   <HeaderCell>Orden</HeaderCell>
                   <HeaderCell>Date</HeaderCell>
                   <HeaderCell>Time</HeaderCell>
                   <HeaderCell>Partnb</HeaderCell>
-                </DataRow>
-                {dataFiles.map((dataFile, i) => {
+                </tr>
+                {dataFiles.map((dataFile, index) => {
                   if (dataFile.file === file) {
                     return (
                       <>
                         <DataRow
-                          key={i}
+                          key={index}
                           onClick={() =>
                             readDBIndividualMeasurementfile(
                               dataFile.partnb,
@@ -238,10 +268,10 @@ const DataTableShift = () => {
                             )
                           }
                         >
-                          <DataCell>{dataFile.orden}</DataCell>
-                          <DataCell>{dataFile.date}</DataCell>
-                          <DataCell>{dataFile.time}</DataCell>
-                          <DataCell>{dataFile.partnb}</DataCell>
+                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.orden}</DataCell>
+                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.date}</DataCell>
+                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.time}</DataCell>
+                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.partnb}</DataCell>
                         </DataRow>
                       </>
                     );
@@ -261,6 +291,10 @@ const ComboBox = ({ selectedShift, setSelectedShift }) => {
   // <ComboBox setSelectedValue={setSelectedValue} selectedValue={selectedValue}/>
 
   //const [selectedValue, setSelectedValue] = useState(""); // Estado para el valor seleccionado
+
+
+
+
 
   const handleSelectChange = (event) => {
     setSelectedShift(separarHoras(event.target.value));

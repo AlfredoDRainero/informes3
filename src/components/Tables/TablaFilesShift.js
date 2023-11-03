@@ -29,31 +29,30 @@ const FileNameCell = styled.p`
   justify-content: center;
   align-content: center;
   text-justify: center;
-  background-color: rgb(51,61,74,0.5);
+  background-color: rgb(51, 61, 74, 0.5);
   font-size: 12px;
   height: 20px;
   width: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: rgb(210,210,210,1);
+  color: rgb(210, 210, 210, 1);
 `;
 const DataRow = styled.tr`
   //background-color: #252a34;
   font-size: 12px;
   transition: background-color 0.3s;
 
-&:hover { 
-   color: #08d9d6;
- }
- 
+  &:hover {
+    color: #08d9d6;
+  }
 `;
-
 
 const Th = styled.th`
   background-color: #08d9d6;
   color: #252a34;
-  padding: 5px;
+  height:30px;
+ // padding: 5px;
 `;
 
 const DataRowMain = styled.tr`
@@ -77,7 +76,7 @@ const DataCell = styled.td`
 
 const SelectContainer = styled.div`
   position: relative;
-  width: 100%; 
+  width: 100%;
   background-color: #252a34;
   color: #252a34;
   cursor: pointer;
@@ -85,9 +84,6 @@ const SelectContainer = styled.div`
   justify-content: center;
   margin-top: 20px;
   margin-top: 10px;
-
-  
-
 `;
 
 const Dropdown = styled.select`
@@ -100,12 +96,12 @@ const Dropdown = styled.select`
   background-color: #252a34;
   //border: 1px solid #08d9d6;
   color: #252a34;
-  color:#dddddd;
+  color: #dddddd;
   cursor: pointer;
   font-size: 15px;
   transition: background-color 0.3s;
 
- &:hover {
+  &:hover {
     background-color: #08d9d6; /* Cambia el color de fondo en hover */
     color: #252a34;
     //color:#08d9d6;
@@ -175,9 +171,11 @@ const DataTableShift = () => {
 
   useEffect(() => {
     fetchData();
-  }, [selectedShift]); 
+  }, [selectedShift]);
 
   useEffect(() => {}, [msj]);
+
+
 
   async function readDBIndividualMeasurementfile(partnb, file) {
     try {
@@ -187,6 +185,8 @@ const DataTableShift = () => {
         DATO2: file
       };
       const result = await RequestMsj(consulta);
+      result.data.file = file;
+   
       console.log("Esperando a que se resuelva la promesa...", result);
       setMeasurementFile(result.data);
     } catch (error) {
@@ -202,7 +202,11 @@ const DataTableShift = () => {
         DATO2: file
       };
       const result = await RequestMsj(consulta);
+      result.data.file = file;
+    
       console.log("Esperando a que se resuelva la promesa...", result);
+      //console.log("=============>",result)
+
       setDataFile(result.data);
     } catch (error) {
       console.error("Error al obtener el mensaje:", error);
@@ -214,76 +218,97 @@ const DataTableShift = () => {
   const handleRowClick = (index) => {
     if (selectedRow === index) {
       setSelectedRow(null);
-      
     } else {
       setSelectedRow(index);
-      
     }
   };
 
   useEffect(() => {
-    console.log("selectedRow:",selectedRow)
+    
   });
 
   return (
-    <Container>
+    <>
       <Table>
-        <ComboBox
-          setSelectedShift={setSelectedShift}
-          selectedShift={selectedShift}
-        />
         <thead>
           <tr>
             <Th>Shift's Reports</Th>
           </tr>
         </thead>
+      </Table>  
+      <Container>
+        <Table>
+          <ComboBox
+            setSelectedShift={setSelectedShift}
+            selectedShift={selectedShift}
+          />
 
-        <tbody>
-          {files.map((file, index) => (
-            <DataRowMain key={index}>
-              <DataCell>
-                <FileNameCell>
-                <p style={{color:"#08d9d6"}}>■</p><p>{file}</p>
-                </FileNameCell>
-                <tr>
-                  <HeaderCell>Orden</HeaderCell>
-                  <HeaderCell>Date</HeaderCell>
-                  <HeaderCell>Time</HeaderCell>
-                  <HeaderCell>Partnb</HeaderCell>
-                </tr>
-                {dataFiles.map((dataFile, index) => {
-                  if (dataFile.file === file) {
-                    return (
-                      <>
-                        <DataRow
-                          key={index}
-                          onClick={() =>
-                            readDBIndividualMeasurementfile(
-                              dataFile.partnb,
-                              file
-                            ) &
-                            ReadDBIndividualDataFile(
-                              dataFile.partnb,
-                              file
-                            )
-                          }
-                        >
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.orden}</DataCell>
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.date}</DataCell>
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.time}</DataCell>
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)} >{dataFile.partnb}</DataCell>
-                        </DataRow>
-                      </>
-                    );
-                  }
-                  return null;
-                })}
-              </DataCell>
-            </DataRowMain>
-          ))}
-        </tbody>
-      </Table>
-    </Container>
+          <tbody>
+            {files.map((file, index) => (
+              <DataRowMain key={index}>
+                <DataCell>
+                  <FileNameCell>
+                    <p style={{ color: "#08d9d6" }}>■</p>
+                    <p>{file}</p>
+                  </FileNameCell>
+                  <tr>
+                    <HeaderCell>Orden</HeaderCell>
+                    <HeaderCell>Date</HeaderCell>
+                    <HeaderCell>Time</HeaderCell>
+                    <HeaderCell>Partnb</HeaderCell>
+                  </tr>
+                  {dataFiles.map((dataFile, index) => {
+                    if (dataFile.file === file) {
+                      return (
+                        <>
+                          <DataRow
+                            key={index}
+                            onClick={() =>
+                              readDBIndividualMeasurementfile(
+                                dataFile.partnb,
+                                file
+                              ) &
+                              ReadDBIndividualDataFile(dataFile.partnb, file)
+                              
+                            }
+                          >
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.orden}
+                            </DataCell>
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.date}
+                            </DataCell>
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.time}
+                            </DataCell>
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.partnb}
+                            </DataCell>
+                          </DataRow>
+                        </>
+                      );
+                    }
+                    return null;
+                  })}
+                </DataCell>
+              </DataRowMain>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
+    </>
   );
 };
 
@@ -291,10 +316,6 @@ const ComboBox = ({ selectedShift, setSelectedShift }) => {
   // <ComboBox setSelectedValue={setSelectedValue} selectedValue={selectedValue}/>
 
   //const [selectedValue, setSelectedValue] = useState(""); // Estado para el valor seleccionado
-
-
-
-
 
   const handleSelectChange = (event) => {
     setSelectedShift(separarHoras(event.target.value));

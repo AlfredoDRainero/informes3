@@ -7,8 +7,8 @@ import styled from "styled-components";
 //-----------------------------------
 
 const BurgerButtonWrapper = styled.button`
-  width: 60px;
-  height: 60px;
+  width: 20px;
+  height: 40px;
   border: none;
   background: none;
   position: relative;
@@ -18,7 +18,7 @@ const BurgerButtonWrapper = styled.button`
 const Line1 = styled.div`
   width: 20px;
   height: 2px;
-  background-color: gray;
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -33,7 +33,7 @@ const Line1 = styled.div`
 const Line2 = styled.div`
   width: 20px;
   height: 2px;
-  background-color: gray;
+  background-color: white;
   position: absolute;
   top: 50%;
   left: 50%;

@@ -1,5 +1,5 @@
 
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 
 // Define an asynchronous function to save 'tituloToDB' data to the database
 async function saveTituloDataToDB(tituloToDB, dbPath) {

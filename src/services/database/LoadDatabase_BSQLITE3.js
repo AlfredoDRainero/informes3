@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const Database = require("sqlite3"); 
+//const Database = require("sqlite3"); 
 const sqlite3 = require("sqlite3").verbose();
 
 
@@ -12,7 +12,7 @@ async function readFilesInFolder(dbFolderPath) {
   for (const file of files) {
     const filePath = path.join(dbFolderPath, file);
     if (fs.statSync(filePath).isFile()) {
-      const db = new Database(filePath, { verbose: console.log });
+      const db = new sqlite3.Database(filePath, { verbose: console.log });
       const stmt = db.prepare('SELECT date, time, partcomment, partnb, orden FROM title');
       const rows = stmt.all();
       

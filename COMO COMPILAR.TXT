@@ -1,0 +1,53 @@
+instalar
+
+npm install electron-builder --save-dev
+
+//--------------------------------
+
+En package.json cambie .webpack/main a ./src/main.json
+
+//---------------------------
+
+agrego esto tambien
+
+"config": {
+    "forge": {
+      "packagerConfig": {
+        "asar": true
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "mi_aplicacion_electron"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": ["darwin"]
+        }
+      ],
+      "plugins": [
+        [
+          "@electron-forge/plugin-auto-unpack-natives",
+          {
+            "packagerConfig": {
+              "os": "win32",
+              "arch": "x64"
+            }
+          }
+        ]
+      ]
+    }
+  }
+,
+
+
+//------------------------------------------
+
+
+npm run dist
+
+//------------------ 
+
+igual da error que parece tener que ver con los permisos probar en casa.

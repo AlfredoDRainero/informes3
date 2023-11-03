@@ -11,6 +11,7 @@ export function MyContextProvider({ children }) {
   const [data, setData] = useState("Datos iniciales");
   const [measurementFile, setMeasurementFile] = useState([]);
   const [dataFile, setDataFile] = useState([]);
+  const [measurementSelected, setMeasurementSelected] = useState([]);
 
   return (
     <MyContext.Provider
@@ -20,7 +21,9 @@ export function MyContextProvider({ children }) {
         measurementFile,
         setMeasurementFile,
         dataFile,
-        setDataFile
+        setDataFile,
+        measurementSelected,
+        setMeasurementSelected
       }}
     >
       {children}

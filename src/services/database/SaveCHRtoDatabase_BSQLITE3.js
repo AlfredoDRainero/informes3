@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 
 async function saveContenidoDataToDB(data, partnb, dbPath) {
   const db = new sqlite3.Database(dbPath);
@@ -41,7 +41,7 @@ async function saveContenidoDataToDB(data, partnb, dbPath) {
       VALUES (?, ${Array(columnNames.length).fill("?").join(", ")})
     `);
 
-    for (let index = 0; index < data.length; index++) {
+    for (let index = 1; index < data.length; index++) {
       const row = data[index];
       const documentExt = BucleRow(row, partnb);
       const insertValues = [

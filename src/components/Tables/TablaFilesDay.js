@@ -29,30 +29,30 @@ const FileNameCell = styled.p`
   justify-content: center;
   align-content: center;
   text-justify: center;
-  background-color: rgb(51,61,74,0.5);
+  background-color: rgb(51, 61, 74, 0.5);
   font-size: 12px;
   height: 20px;
   width: auto;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: rgb(210,210,210,1);
-
+  color: rgb(210, 210, 210, 1);
 `;
 const DataRow = styled.tr`
   background-color: #252a34;
   font-size: 12px;
   transition: background-color 0.3s;
 
-&:hover { 
-   color: #08d9d6;
- }
+  &:hover {
+    color: #08d9d6;
+  }
 `;
 
 const Th = styled.th`
   background-color: #08d9d6;
   color: #252a34;
-  padding: 5px;
+  //padding: 5px;
+  height:30px;
 `;
 
 const DataRowMain = styled.tr`
@@ -80,9 +80,10 @@ const DataTableDay = () => {
   const { setMeasurementFile } = useMyContext();
   const { setDataFile } = useMyContext();
 
-  const [selectedShift, setSelectedShift] = useState({HRSTART:'00:00:00',HREND:'23:59:59'});
-
-
+  const [selectedShift, setSelectedShift] = useState({
+    HRSTART: "00:00:00",
+    HREND: "23:59:59"
+  });
 
   async function fetchData() {
     try {
@@ -131,11 +132,11 @@ const DataTableDay = () => {
   }, []); // Este useEffect se ejecuta solo cuando el componente se monta
   useEffect(() => {}, [msj]);
 
-
   async function readDBIndividualMeasurementfile(partnb, file) {
     try {
       const consulta = { MSJREQUEST: "G", DATO1: partnb, DATO2: file };
       const result = await RequestMsj(consulta);
+      result.data.file = file;
       console.log("Esperando a que se resuelva la promesa...", result);
       setMeasurementFile(result.data);
     } catch (error) {
@@ -147,6 +148,7 @@ const DataTableDay = () => {
     try {
       const consulta = { MSJREQUEST: "H", DATO1: partnb, DATO2: file };
       const result = await RequestMsj(consulta);
+      result.data.file = file;
       console.log("Esperando a que se resuelva la promesa...", result);
       setDataFile(result.data);
     } catch (error) {
@@ -159,63 +161,87 @@ const DataTableDay = () => {
   const handleRowClick = (index) => {
     if (selectedRow === index) {
       setSelectedRow(null);
-      
     } else {
       setSelectedRow(index);
-      
     }
   };
 
   return (
-    <Container>
+    <>
       <Table>
         <thead>
           <tr>
             <Th>Day's Reports</Th>
           </tr>
         </thead>
-        <tbody>
-          {files.map((file, index) => (
-            <DataRowMain key={index}>
-              <DataCell>
-                <FileNameCell>
-                  <p style={{color:"#08d9d6"}}>■</p><p>{file}</p>
-                </FileNameCell>
-                <tr>
-                  <HeaderCell>Orden</HeaderCell>
-                  <HeaderCell>Date</HeaderCell>
-                  <HeaderCell>Time</HeaderCell>
-                  <HeaderCell>Partnb</HeaderCell>
-                </tr>
-                {dataFiles.map((dataFile, index) => {
-                  if (dataFile.file === file) {
-                    return (
-                      <>
-                        <DataRow
-                          key={index}
-                          onClick={() =>
-                            readDBIndividualMeasurementfile(
-                              dataFile.partnb,
-                              file
-                            ) & ReadDBIndividualDataFile(dataFile.partnb, file)
-                          }
-                        >
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)}>{dataFile.orden}</DataCell>
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)}>{dataFile.date}</DataCell>
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)}>{dataFile.time}</DataCell>
-                          <DataCell isSelected={selectedRow === index} onClick={() => handleRowClick(index)}>{dataFile.partnb}</DataCell>
-                        </DataRow>
-                      </>
-                    );
-                  }
-                  return null;
-                })}
-              </DataCell>
-            </DataRowMain>
-          ))}
-        </tbody>
       </Table>
-    </Container>
+      <Container>
+        <Table>
+          <tbody>
+            {files.map((file, index) => (
+              <DataRowMain key={index}>
+                <DataCell>
+                  <FileNameCell>
+                    <p style={{ color: "#08d9d6" }}>■</p>
+                    <p>{file}</p>
+                  </FileNameCell>
+                  <tr>
+                    <HeaderCell>Orden</HeaderCell>
+                    <HeaderCell>Date</HeaderCell>
+                    <HeaderCell>Time</HeaderCell>
+                    <HeaderCell>Partnb</HeaderCell>
+                  </tr>
+                  {dataFiles.map((dataFile, index) => {
+                    if (dataFile.file === file) {
+                      return (
+                        <>
+                          <DataRow
+                            key={index}
+                            onClick={() =>
+                              readDBIndividualMeasurementfile(
+                                dataFile.partnb,
+                                file
+                              ) &
+                              ReadDBIndividualDataFile(dataFile.partnb, file)
+                            }
+                          >
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.orden}
+                            </DataCell>
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.date}
+                            </DataCell>
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.time}
+                            </DataCell>
+                            <DataCell
+                              isSelected={selectedRow === index}
+                              onClick={() => handleRowClick(index)}
+                            >
+                              {dataFile.partnb}
+                            </DataCell>
+                          </DataRow>
+                        </>
+                      );
+                    }
+                    return null;
+                  })}
+                </DataCell>
+              </DataRowMain>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
+    </>
   );
 };
 

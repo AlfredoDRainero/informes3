@@ -9,14 +9,16 @@ import { RequestMsj } from "./SendAndReceiveData";
 import { MyContextProvider } from "./contexts/MyContext";
 
 import MyComponent from "./components/MyComponentTest";
-import TablaPrincipal from "./components/Tables/TablaMeasurement";
+import TablaMeasurement from "./components/Tables/TablaMeasurement";
 import TablaDatos from "./components/Tables/TablaDatos";
+
 
 import FileListTable from "./components/Tables/TablaFilesAll";
 import DataTableDay from "./components/Tables/TablaFilesDay";
 import DataTableShift from "./components/Tables/TablaFilesShift";
+import DataTableTools from "./components/Tables/TablaFilesTools";
 
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   /* Estilo del contenedor de la barra de desplazamiento */
@@ -39,8 +41,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-
-
 const MainDiv = styled.div`
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   background-color: #d1d1d1;
@@ -55,8 +55,9 @@ const MainDiv = styled.div`
 `;
 
 const Sider = styled.div`
-  width: 80px;
+  width: 40px;
   background-color: #252a34;
+  background-color: black;
   color: #fff;
 `;
 
@@ -73,17 +74,19 @@ const fadeIn = keyframes`
 
 const MenuIcon = styled.div`
   padding: 5px 5px;
-  margin: 2px;
-  //border-radius: 6px;
-  border-width: 1px;
-  border-style: solid;
-  font-size: 12px;
+  padding-top: 10px;
+  margin: 1px;
+  font-size: 10px;
   font-family: "Ubuntu", sans-serif;
   cursor: pointer;
   transition: 0.3s ease;
   background-color: black;
   color: white;
+  height: 20px;
+ 
 
+
+  
   &:hover {
     animation: ${fadeIn} 0.3s ease;
     animation-fill-mode: forwards;
@@ -112,8 +115,6 @@ const BottomContainer = styled.div`
   overflow-y: auto;
 `;
 
-
-
 const LeftBottomContainer = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
@@ -122,9 +123,7 @@ const LeftBottomContainer = styled.div`
   background-color: #252a34;
 `;
 
-
 const BottomRightTopContainer = styled.div`
-  
   overflow-y: auto;
   width: 100%;
   background-color: #252a34;
@@ -136,7 +135,6 @@ const BottomRightTopContainer = styled.div`
 `;
 
 const BottomRightBottomContainer = styled.div`
-  
   overflow-y: auto;
   width: 100%;
   background-color: #252a34;
@@ -144,7 +142,7 @@ const BottomRightBottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-    border-width: 1px;
+  border-width: 1px;
   border-style: solid;
   //border:none;
   //border-top: #dddddd;
@@ -154,7 +152,7 @@ const BottomRightBottomContainer = styled.div`
   border-left: none;
   border-right: none;
   border-bottom: none;
-  color:#dddddd;
+  color: #dddddd;
 `;
 
 const RightBottomContainer = styled.div`
@@ -164,7 +162,6 @@ const RightBottomContainer = styled.div`
   grid-template-rows: 70% 30%;
   flex-grow: 1;
   overflow-y: auto;
- 
 `;
 
 const FileListTopMenu = styled.div`
@@ -239,10 +236,30 @@ const FileListMenuButton3 = styled.div`
   background-color: ${(props) => (props.isActive ? "#08d9d6" : "#7a7d85")};
 `;
 
+const FileListMenuButton4 = styled.div`
+  width: 100%;
+  background-color: #7a7d85;
+  border: 1px solid #222831;
+  display: flex; /* Utiliza flexbox */
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #08d9d6; /* Cambia el color de fondo en hover */
+    color: #252a34;
+  }
+  border-left: none;
+  border-bottom: ${(props) => (props.isActive ? "none" : "1px solid #222831")};
+  background-color: ${(props) => (props.isActive ? "#08d9d6" : "#7a7d85")};
+`;
+
 function App() {
   const [tableDay, setTableDay] = useState(false);
   const [tableShift, setTableShift] = useState(false);
   const [tableFull, setTableFull] = useState(true);
+  const [tools, setTools] = useState(false);
+  
 
   async function FileDataDb() {
     try {
@@ -274,36 +291,46 @@ function App() {
   const [isActiveButton1, setIsActiveButton1] = useState(false);
   const [isActiveButton2, setIsActiveButton2] = useState(false);
   const [isActiveButton3, setIsActiveButton3] = useState(false);
+  const [isActiveButton4, setIsActiveButton4] = useState(false);
 
   const handleButton1Click = () => {
     setIsActiveButton1(true);
     setIsActiveButton2(false);
     setIsActiveButton3(false);
+    setIsActiveButton4(false);
   };
   const handleButton2Click = () => {
     setIsActiveButton1(false);
     setIsActiveButton2(true);
     setIsActiveButton3(false);
+    setIsActiveButton4(false);
   };
   const handleButton3Click = () => {
     setIsActiveButton1(false);
     setIsActiveButton2(false);
     setIsActiveButton3(true);
+    setIsActiveButton4(false);
+  };
+  const handleButton4Click = () => {
+    setIsActiveButton1(false);
+    setIsActiveButton2(false);
+    setIsActiveButton3(false);
+    setIsActiveButton4(true);
   };
 
   return (
     <>
-    <GlobalStyle />
+      <GlobalStyle />
       <MyContextProvider>
         <MainDiv>
           <div style={{ display: "flex" }}>
-          <Sider>
-              <BurgerButton />
-               {/*<MyComponent />*/}              
-              <MenuIcon>Imp</MenuIcon>
+            <Sider>
+              <BurgerButton onClick={() => FileDataDb()}/>
+                  
+             
               <MenuIcon onClick={() => FileDataDb()}>Save</MenuIcon>
-              <MenuIcon>📂</MenuIcon>
-              
+             {/* <MenuIcon>📂</MenuIcon>
+              <MenuIcon>Imp</MenuIcon>*/}
             </Sider>
             <GridContainer>
               <TopContainer>
@@ -315,6 +342,7 @@ function App() {
                       setTableShift(true) &
                       setTableDay(false) &
                       setTableFull(false) &
+                      setTools(false) &
                       handleButton1Click()
                     }
                   >
@@ -326,6 +354,7 @@ function App() {
                       setTableShift(false) &
                       setTableDay(true) &
                       setTableFull(false) &
+                      setTools(false) &
                       Prueba() &
                       handleButton2Click()
                     }
@@ -338,31 +367,44 @@ function App() {
                       setTableShift(false) &
                       setTableDay(false) &
                       setTableFull(true) &
+                      setTools(false) &
                       handleButton3Click()
                     }
                   >
                     <a>Full DataBase</a>
                   </FileListMenuButton3>
+                  <FileListMenuButton4
+                    isActive={isActiveButton4}
+                    onClick={() =>
+                      setTableShift(false) &
+                      setTableDay(false) &
+                      setTableFull(false) &
+                      setTools(true) &
+                      handleButton4Click()
+                    }
+                  >
+                    <a>Tools</a>
+                  </FileListMenuButton4>
                 </FileListTopMenu>
               </TopContainer>
 
               <BottomContainer>
                 <LeftBottomContainer>
-                  <TablaPrincipal />
+                  <TablaMeasurement />
                 </LeftBottomContainer>
                 <RightBottomContainer>
                   <BottomRightTopContainer>
                     {tableFull && <FileListTable />}
                     {tableDay && <DataTableDay />}
                     {tableShift && <DataTableShift />}
-                    </BottomRightTopContainer>
+                    {tools && <DataTableTools />}
+                  </BottomRightTopContainer>
                   <BottomRightBottomContainer>
                     Graficos
                   </BottomRightBottomContainer>
                 </RightBottomContainer>
               </BottomContainer>
             </GridContainer>
-          
           </div>
         </MainDiv>
       </MyContextProvider>

@@ -25,7 +25,8 @@ const TableRow = styled.tr`
   &:nth-child(odd) {
     //background-color: #252a34;
     //color: #eaeaea;
-
+overflow-y: auto;
+  overflow-x: hidden;
     background-color: ${(props) => (props.isSelected ? "#dddddd" : "#252a34")};
     border-color: ${(props) => (props.isSelected ? "#dddddd" : "#252A34")};
     color: ${(props) => (props.isSelected ? "#252a34" : "#eaeaea")};
@@ -58,9 +59,10 @@ const TableHeaderCell = styled.th`
   text-align: left;
 `;
 
-function TablaPrincipal() {
+function TablaMeasurement() {
   //const { data, setData } = useMyContext();
   const { measurementFile, setMeasurementFile } = useMyContext();
+  const { measurementSelected, setMeasurementSelected } = useMyContext();
   // Use data and setData in your component
 
   useEffect(() => {
@@ -86,12 +88,11 @@ function TablaPrincipal() {
         <TableHead>
           <tr>
             {columnas.map((columna, index) => {
-              if (index === 0) {
-                return <TableHeaderCell key={index}>{columna}</TableHeaderCell>;
-              } else if (index > 1) {
-                return <TableHeaderCell key={index}>{columna}</TableHeaderCell>;
-              }
-              return null;
+             
+             if (index === 0 || index > 1) {
+              return <TableHeaderCell key={index}>{columna.toUpperCase()}</TableHeaderCell>;
+            }
+            return null;
             })}
           </tr>
         </TableHead>
@@ -134,7 +135,7 @@ function TablaPrincipal() {
                     <TableCell
                       key={columnIndex}
                       style={{ color: cellColor }}
-                      onClick={() => handleRowClick(index)}
+                      onClick={() => handleRowClick(index) & setMeasurementSelected(cellContent)}
                     >
                       {cellContent}
                     </TableCell>
@@ -150,4 +151,4 @@ function TablaPrincipal() {
   );
 }
 
-export default TablaPrincipal;
+export default TablaMeasurement;

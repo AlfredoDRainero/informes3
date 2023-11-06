@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const BottomRightTopContainer = styled.div`
-   width: 100%;
+  width: 100%;
   background-color: #252a34;
   height: 20px;
   display: grid;
@@ -15,88 +15,84 @@ const BottomRightTopContainer = styled.div`
   align-items: center;
   color: #dddddd;
   font-size: 12px;
-  
 `;
 
 const Container = styled.div`
   color: white;
   padding: 15px;
-  font-size: 12px;;
+  font-size: 12px;
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   background-color: #252a34;
-  font-size: 12px;;
+  font-size: 12px;
 `;
 
 const Th = styled.th`
   background-color: #08d9d6;
   color: #252a34;
-  font-size: 15px;;
-  height:30px;
+  font-size: 15px;
+  height: 30px;
 `;
 
 const DatePickerContainer = styled.div`
   width: 200px; /* Ajusta el ancho del DatePicker como desees */
-  font-size: 12px;;
+  font-size: 12px;
 `;
 
 const InputContainer = styled.div`
   width: 200px; /* Ajusta el ancho del DatePicker como desees */
-  font-size: 12px;;
+  font-size: 12px;
 `;
-
 
 const DatePickerStyled = styled(DatePicker)`
   background-color: #252a34;
   color: #dddddd;
   border: 1px solid #08d9d6;
   text-align: center;
-  font-size: 12px;;
-  width: 100px;;
+  font-size: 12px;
+  width: 100px;
 `;
 
-const Input =  styled.input`
+const Input = styled.input`
   background-color: #252a34;
   color: #dddddd;
   border: 1px solid #08d9d6;
   text-align: center;
-  font-size: 12px;;
-  width: 100px;;
+  font-size: 12px;
+  width: 100px;
 `;
 
+const Button1 = styled.button`
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 
+  &:hover {
+    background-color: #2980b9;
+  }
+`;
 
 const DataTableTools = () => {
   const [msj, setMsj] = useState([]);
 
-  const [selectedShift, setSelectedShift] = useState({});
-
-  const { setMeasurementFile } = useMyContext();
-
-  const { dataFile, setDataFile } = useMyContext();
+  //const { setMeasurementFile } = useMyContext();
+  const { dataFile } = useMyContext();
   const { measurementSelected } = useMyContext();
 
   useEffect(() => {
     //fetchData();
-    console.log("measurementSelected", measurementSelected);
+    // console.log("measurementSelected", measurementSelected);
   }, [measurementSelected]); // Este useEffect se ejecuta solo cuando el componente se monta
 
-  useEffect(() => {
-    //fetchData();
-  }, []); // Este useEffect se ejecuta solo cuando el componente se monta
-
-  useEffect(() => {
-    //fetchData();
-  }, [selectedShift]);
-
   useEffect(() => {}, [msj]);
-
-  useEffect(() => {
-    console.log("----------------->", dataFile.file);
-  });
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(null);
   const [selectedDateTo, setSelectedDateTo] = useState(null);
@@ -119,15 +115,60 @@ const DataTableTools = () => {
     setShowOrderText(false);
   };
 
-  const options = {
-    year: "numeric",
-    month: "2-digit", // 2 dígitos para el mes (MM)
-    day: "2-digit" // 2 dígitos para el día (DD)
-  };
 
   
+  async function ReadDBIntervalDateSearchWord(
+    fechaStart,
+    fechaEnd,
+    filename,
+    orderFilter,
+    searchWord
+  ) {
 
- 
+    
+   
+
+    
+
+    function separateDate(fechaString) {
+      const options = {
+        year: "numeric",
+        month: "2-digit", // 2 dígitos para el mes (MM)
+        day: "2-digit" // 2 dígitos para el día (DD)
+      };
+  
+      const fechaString2 =  fechaString.toLocaleDateString("en-US",options)
+      const partes = fechaString2.split("-");
+      const date = {
+        year: parseInt(partes[0]),
+        month: parseInt(partes[1]),
+        day: parseInt(partes[2])
+      };
+      return date;
+    }
+
+    console.log("año", separateDate(fechaStart).year);
+
+    try {
+      const consulta = {
+        MSJREQUEST: "J",
+        DATO1: separateDate(fechaStart).year,
+        DATO2: separateDate(fechaStart).month,
+        DATO3: separateDate(fechaStart).day,
+        DATO4: separateDate(fechaEnd).year,
+        DATO5: separateDate(fechaEnd).month,
+        DATO6: separateDate(fechaEnd).day,
+        DATO7: filename,
+        DATO8: orderFilter,
+        DATO1: searchWord
+      };
+      const result = await RequestMsj(consulta);
+      console.log("Esperando a que se resuelva la promesa...", result);
+    } catch (error) {
+      console.error("Error al obtener el mensaje:", error);
+    }
+  }
+
   return (
     <>
       <Table>
@@ -139,18 +180,16 @@ const DataTableTools = () => {
       </Table>
 
       <Container>
-
-
-
         <BottomRightTopContainer>
-          
           <p>
-            {/*selectedDateFrom
+            {
+              /*selectedDateFrom
               ? `From Date: ${selectedDateFrom.toLocaleDateString(
                   "en-US",
                   options
                 )}`
-              :*/ "From Date:"}
+              :*/ "From Date:"
+            }
           </p>
           <DatePickerContainer>
             <DatePickerStyled
@@ -162,14 +201,16 @@ const DataTableTools = () => {
 
         <br />
 
-        <BottomRightTopContainer>       
+        <BottomRightTopContainer>
           <p>
-            {/*selectedDateTo
+            {
+              /*selectedDateTo
               ? `To Date: ${selectedDateTo.toLocaleDateString(
                   "en-US",
                   options
                 )}`
-              : */"To Date :"}
+              : */ "To Date :"
+            }
           </p>
           <DatePickerContainer>
             <DatePickerStyled
@@ -182,46 +223,62 @@ const DataTableTools = () => {
         <br />
 
         <BottomRightTopContainer>
-        <p>
-            {/*orderText
+          <p>
+            {
+              /*orderText
               ? `filter in order field: ${orderText}`
-              : */"filter in order field:"}
-        </p>
-        <InputContainer>
+              : */ "filter in order field:"
+            }
+          </p>
+          <InputContainer>
             <Input
               type="text"
               value={orderText}
               onChange={(e) => handleTextInputChange(e.target.value)}
               placeholder=""
             />
-         </InputContainer>
+          </InputContainer>
 
-         <Value>
-          Selected File :
-        </Value>
+          <Value>Selected File :</Value>
 
-        {dataFile && (
-          <DataContent
-            style={{
-              display: "flex",
-              
-              backgroundColor: ""
-            }}
+          {dataFile && (
+            <DataContent
+              style={{
+                display: "flex",
+                backgroundColor: ""
+              }}
+            >
+              {dataFile.file
+                ? dataFile.file.substring(
+                    0,
+                    dataFile.file.lastIndexOf(
+                      "_",
+                      dataFile.file.lastIndexOf("_") - 1
+                    )
+                  )
+                : ""}
+            </DataContent>
+          )}
+
+          <Value>Search :</Value>
+
+          {measurementSelected && (
+            <DataContent>{measurementSelected}</DataContent>
+          )}
+          <Button1
+            onClick={() =>
+              ReadDBIntervalDateSearchWord(
+                selectedDateFrom,
+                selectedDateTo,
+                dataFile.file.substring(0,dataFile.file.lastIndexOf("_",dataFile.file.lastIndexOf("_") - 1)),
+                "asdasd",
+                "12312312",
+              )
+            }
           >
-            {dataFile.file.substring(0, dataFile.file.lastIndexOf('_', dataFile.file.lastIndexOf('_') - 1))}
-          </DataContent>
-        )}
-
-        <Value>
-          Search :
-        </Value>
-
-        {measurementSelected && (
-          <DataContent>{measurementSelected}</DataContent>
-        )}
+            Search
+          </Button1>
         </BottomRightTopContainer>
-
-        
       </Container>
     </>
   );
@@ -230,14 +287,11 @@ const fieldsToShow = ["partcomment", "orden", "partnb", "date", "time"];
 
 const DataContent = styled.div`
   height: auto;
-  //background-color: red;
 `;
 
 const Value = styled.p`
   font-size: 12px;
   height: auto;
-  //margin-top: 5px;
-  //background-color: blue;
 `;
 
 export default DataTableTools;

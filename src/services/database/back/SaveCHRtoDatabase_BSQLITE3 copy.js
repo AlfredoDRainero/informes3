@@ -45,7 +45,7 @@ async function saveContenidoDataToDB(data, partnb, dbPath) {
             .slice(1)
             .map((value) => (value !== undefined ? value : null))
         ];
-        console.log("insertValues",insertValues)
+        //console.log("insertValues",insertValues)
         if (index === 0) {
           // Opcional: Puedes realizar alguna acción especial en la primera fila si es necesario
         } else if (insertValues.length === columnNames.length + 1) {

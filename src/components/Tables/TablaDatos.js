@@ -68,7 +68,7 @@ function TablaDatos() {
 
 
   useEffect(() => {
-    console.log("datafiles :",dataFile)
+    //console.log("datafiles :",dataFile)
   }, [dataFile]);
 
   const columnas = dataFile.length > 0 ? Object.keys(dataFile[0]) : [];

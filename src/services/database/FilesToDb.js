@@ -51,7 +51,7 @@ const userData = app.getAppPath(); // Obtén la ubicación de la aplicación
 async function SaveFilesToDB(ubicacion) {
 
   let auxContador = 0;
-  console.log("ubicacion:", ubicacion, "userData", userData);
+  //console.log("ubicacion:", ubicacion, "userData", userData);
   const archivos = fs
     .readdirSync(ubicacion)
     .filter((file) => path.extname(file) === ".txt" && file.includes("_chr"));

@@ -32,7 +32,7 @@ async function readFilesInFolder(dbFolderPath) {
 
 
 async function readFilesData(dbFolderPath, fileName) {
-  console.log("dbFolderPath+fileName:", dbFolderPath + fileName);
+  //console.log("dbFolderPath+fileName:", dbFolderPath + fileName);
   return new Promise((resolve, reject) => {
     try {
       const filePath = path.join(dbFolderPath, fileName);
@@ -41,7 +41,7 @@ async function readFilesData(dbFolderPath, fileName) {
         throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
       }
 
-      console.log("filePath:", filePath);
+      //console.log("filePath:", filePath);
 
       const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
         if (err) {
@@ -155,7 +155,7 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
         throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
       }
 
-      console.log("filePath:", filePath);
+      //console.log("filePath:", filePath);
 
       const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
         if (err) {
@@ -269,7 +269,7 @@ async function readFileData(dbFolderPath, fileName, partnb) {
         throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
       }
 
-      console.log("filePath:", filePath);
+      //console.log("filePath:", filePath);
 
       const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
         if (err) {

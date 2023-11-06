@@ -43,7 +43,7 @@ function SearchFilesFolderByYearMonth(year, month) {
       //const rutaCompleta = path.join(carpetaData, nombreArchivo);
       //const stats = fs.statSync(rutaCompleta);
       if (nombreArchivo.includes(`${year}_${month}`)) {
-        console.log(`Archivo encontrado: ${nombreArchivo}`);
+        //console.log(`Archivo encontrado: ${nombreArchivo}`);
         // Agrega información sobre el archivo que sea serializable en JSON
         archivosObjeto[indexAux] = {
           nombre: nombreArchivo

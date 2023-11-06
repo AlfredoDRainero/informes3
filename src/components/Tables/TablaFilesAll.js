@@ -145,7 +145,8 @@ function FileListTable() {
     try {
       const consulta = { MSJREQUEST: "G", DATO1: partnb, DATO2: fileName };
       const result = await RequestMsj(consulta);
-      result.data.file = file.name;
+      result.data.file =  file.name + "_" + file.date + ".db";
+      //console.log("--------------------->",)
       console.log("Esperando a que se resuelva la promesa...", result);
       setMeasurementFile(result.data);
     } catch (error) {
@@ -159,7 +160,7 @@ function FileListTable() {
     try {
       const consulta = { MSJREQUEST: "H", DATO1: partnb, DATO2: fileName };
       const result = await RequestMsj(consulta);
-      result.data.file = file.name;
+      result.data.file =  file.name + "_" + file.date + ".db";
       console.log("Esperando a que se resuelva la promesa...", result);
       setDataFile(result.data);
     } catch (error) {
@@ -169,7 +170,7 @@ function FileListTable() {
 
   useEffect(() => {}, [dataFiles]);
 
-  useEffect(() => {}, [dataFiles]);
+  //useEffect(() => {}, [dataFiles]);
 
   const [selectedRow, setSelectedRow] = useState(null);
 

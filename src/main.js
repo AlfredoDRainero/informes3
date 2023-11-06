@@ -125,7 +125,7 @@ ipcMain.on("msjToMainName", async (event, request) => {
 
 async function recoverDataFilesfromDBFiles(dbFiles,dayQuery,shiftQuery) {
   try {
-    console.log("dbFiles:",dbFiles)
+    //console.log("dbFiles:",dbFiles)
     const userData = app.getAppPath();
     const dbFolder = path.join(userData, './data/');
     const resultObj = {};
@@ -143,7 +143,7 @@ async function recoverDataFilesfromDBFiles(dbFiles,dayQuery,shiftQuery) {
     }
 
     //-----------esto solo es para imprimir en consola para chequear que se cargo.. despues borrar----
-    for (const key in resultObj) {
+    /*for (const key in resultObj) {
       if (resultObj.hasOwnProperty(key)) {
         const data = resultObj[key].data;
     
@@ -158,9 +158,9 @@ async function recoverDataFilesfromDBFiles(dbFiles,dayQuery,shiftQuery) {
     for (const key in resultObj) {
       if (resultObj.hasOwnProperty(key)) {
         const dbFileString = resultObj[key].file;
-        console.log(dbFileString);
+        //console.log(dbFileString);
       }
-    }
+    }*/
 
     
     //-----------------------------------------------------------------------
@@ -179,7 +179,7 @@ async function recoverDataFilesfromDBFile(dbFile) {
     const userData = app.getAppPath();
     const dbFolder = path.join(userData, './data/');    
     const fileData = await readFilesData(dbFolder, dbFile);
-    console.log("-------------------fileData:",fileData)
+    //console.log("-------------------fileData:",fileData)
     return fileData;
   } catch (error) {
     console.error("Error:", error);

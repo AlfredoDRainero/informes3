@@ -1,9 +1,10 @@
+const { generarIntervaloMeses } = require("../../utils/fecha");
+
+
 const fs = require("fs");
 const path = require("path");
-//const Database = require("sqlite3"); 
+//const Database = require("sqlite3");
 const sqlite3 = require("sqlite3").verbose();
-
-
 
 async function readFilesInFolder(dbFolderPath) {
   const files = fs.readdirSync(dbFolderPath);
@@ -13,12 +14,14 @@ async function readFilesInFolder(dbFolderPath) {
     const filePath = path.join(dbFolderPath, file);
     if (fs.statSync(filePath).isFile()) {
       const db = new sqlite3.Database(filePath, { verbose: console.log });
-      const stmt = db.prepare('SELECT date, time, partcomment, partnb, orden FROM title');
+      const stmt = db.prepare(
+        "SELECT date, time, partcomment, partnb, orden FROM title"
+      );
       const rows = stmt.all();
-      
+
       // Agregar datos al objeto result
       result[file] = { data: rows };
-      
+
       db.close();
     }
   }
@@ -29,8 +32,6 @@ async function readFilesInFolder(dbFolderPath) {
   return result;
 }
 
-
-
 async function readFilesData(dbFolderPath, fileName) {
   //console.log("dbFolderPath+fileName:", dbFolderPath + fileName);
   return new Promise((resolve, reject) => {
@@ -38,45 +39,50 @@ async function readFilesData(dbFolderPath, fileName) {
       const filePath = path.join(dbFolderPath, fileName);
 
       if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-        throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
+        throw new Error(
+          `El archivo '${fileName}' no existe o no es un archivo válido.`
+        );
       }
 
-      //console.log("filePath:", filePath);
+      const db = new sqlite3.Database(
+        filePath,
+        sqlite3.OPEN_READWRITE,
+        (err) => {
+          if (err) {
+            console.error("Error al abrir la base de datos:", err.message);
+            reject(err);
+          } else {
+            console.log("Conexión exitosa a la base de datos");
 
-      const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-          console.error("Error al abrir la base de datos:", err.message);
-          reject(err);
-        } else {
-          console.log("Conexión exitosa a la base de datos");
+            const stmt = db.prepare(
+              "SELECT date, time, partcomment, partnb, orden FROM title"
+            );
 
-        
-
-          const stmt = db.prepare('SELECT date, time, partcomment, partnb, orden FROM title');
-
-          stmt.all((err, rows) => {
-
-            if (err) {
-              console.error("Error al ejecutar la consulta:", err.message);
-              reject(err);
-            } else {
-              console.log("Consulta exitosa");
-              const result = { data: rows };
-              stmt.finalize(); // Finaliza la declaración después de su uso
-              db.close((err) => {
-                if (err) {
-                  console.error("Error al cerrar la base de datos:", err.message);
-                  reject(err);
-                } else {
-                  console.log("Base de datos cerrada");
-                  resolve(result); // Resuelve la promesa con el resultado
-                }
-              });
-            }
-          });
+            stmt.all((err, rows) => {
+              if (err) {
+                console.error("Error al ejecutar la consulta:", err.message);
+                reject(err);
+              } else {
+                console.log("Consulta exitosa");
+                const result = { data: rows };
+                stmt.finalize(); // Finaliza la declaración después de su uso
+                db.close((err) => {
+                  if (err) {
+                    console.error(
+                      "Error al cerrar la base de datos:",
+                      err.message
+                    );
+                    reject(err);
+                  } else {
+                    console.log("Base de datos cerrada");
+                    resolve(result); // Resuelve la promesa con el resultado
+                  }
+                });
+              }
+            });
+          }
         }
-      });
-
+      );
     } catch (error) {
       console.error("Error al leer el archivo:", error);
       reject(error);
@@ -84,67 +90,76 @@ async function readFilesData(dbFolderPath, fileName) {
   });
 }
 
-async function readFilesDataWithDay(dbFolderPath, fileName, dayQuery, shiftQuery) {
+async function readFilesDataWithDay(
+  dbFolderPath,
+  fileName,
+  dayQuery,
+  shiftQuery
+) {
   //const partnb = '30986'
   return new Promise((resolve, reject) => {
     try {
       const filePath = path.join(dbFolderPath, fileName);
 
       if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-        throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
+        throw new Error(
+          `El archivo '${fileName}' no existe o no es un archivo válido.`
+        );
       }
-      
-      
-      //console.log("filePath:", filePath);
 
-      const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-          console.error("Error al abrir la base de datos:", err.message);
-          reject(err);
-        } else {
-          console.log("Conexión exitosa a la base de datos");
-          
-          
-          //const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? ');
-          const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? AND time >= ? AND time <= ?');
-          
-          const variableA = shiftQuery.HRSTART
-          const variableB = shiftQuery.HREND
-          
-          //stmt.all(dayQuery,   (err, rows) => { 
-          stmt.all(dayQuery, variableA, variableB,  (err, rows) => {
-            if (err) {
-              console.error("Error al ejecutar la consulta:", err.message);
-              reject(err);
-            } else {
-              console.log("Consulta exitosa");             
-              rows.forEach((row) => {
-                row.file = fileName;
-              })
-              const result = { data: rows };
-              //console.log("********************resulado prueba:",result)
-              stmt.finalize(); // Finaliza la declaración después de su uso
-              db.close((err) => {
-                if (err) {
-                  console.error("Error al cerrar la base de datos:", err.message);
-                  reject(err);
-                } else {
-                  console.log("Base de datos cerrada");
-                  resolve(result); // Resuelve la promesa con el resultado
-                }
-              });
-            }
-          });
+      const db = new sqlite3.Database(
+        filePath,
+        sqlite3.OPEN_READWRITE,
+        (err) => {
+          if (err) {
+            console.error("Error al abrir la base de datos:", err.message);
+            reject(err);
+          } else {
+            console.log("Conexión exitosa a la base de datos");
+
+            //const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? ');
+            const stmt = db.prepare(
+              "SELECT date, time, orden, partnb FROM title WHERE date = ? AND time >= ? AND time <= ?"
+            );
+
+            const variableA = shiftQuery.HRSTART;
+            const variableB = shiftQuery.HREND;
+
+            stmt.all(dayQuery, variableA, variableB, (err, rows) => {
+              if (err) {
+                console.error("Error al ejecutar la consulta:", err.message);
+                reject(err);
+              } else {
+                console.log("Consulta exitosa");
+                rows.forEach((row) => {
+                  row.file = fileName;
+                });
+                const result = { data: rows };
+
+                stmt.finalize(); // Finaliza la declaración después de su uso
+                db.close((err) => {
+                  if (err) {
+                    console.error(
+                      "Error al cerrar la base de datos:",
+                      err.message
+                    );
+                    reject(err);
+                  } else {
+                    console.log("Base de datos cerrada");
+                    resolve(result); // Resuelve la promesa con el resultado
+                  }
+                });
+              }
+            });
+          }
         }
-      });
-
+      );
     } catch (error) {
       console.error("Error al leer el archivo:", error);
       reject(error);
     }
   });
 }
-
 
 async function readFileMeasurement(dbFolderPath, fileName, partnb) {
   return new Promise((resolve, reject) => {
@@ -152,105 +167,182 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
       const filePath = path.join(dbFolderPath, fileName);
 
       if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-        throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
+        throw new Error(
+          `El archivo '${fileName}' no existe o no es un archivo válido.`
+        );
       }
 
       //console.log("filePath:", filePath);
 
-      const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-          console.error("Error al abrir la base de datos:", err.message);
-          reject(err);
-        } else {
-          console.log("Conexión exitosa a la base de datos");
+      const db = new sqlite3.Database(
+        filePath,
+        sqlite3.OPEN_READWRITE,
+        (err) => {
+          if (err) {
+            console.error("Error al abrir la base de datos:", err.message);
+            reject(err);
+          } else {
+            console.log("Conexión exitosa a la base de datos");
 
-          const stmt = db.prepare('SELECT * FROM measurement WHERE partnb = ?');
+            const stmt = db.prepare(
+              "SELECT * FROM measurement WHERE partnb = ?"
+            );
 
-          stmt.all(partnb, (err, rows) => {
-            if (err) {
-              console.error("Error al ejecutar la consulta:", err.message);
-              reject(err);
-            } else {
-              console.log("Consulta exitosa");
+            stmt.all(partnb, (err, rows) => {
+              if (err) {
+                console.error("Error al ejecutar la consulta:", err.message);
+                reject(err);
+              } else {
+                console.log("Consulta exitosa");
 
-              
-              
-              rows.forEach((row) => {
+                rows.forEach((row) => {
+                  //-------------------------------------------------
+                  //--- CALCULO DE LA DESVIACION O DIFERENCIA -------
+                  //-------------------------------------------------
+                  // Acceso a la columna por índice
+                  const actual = row[Object.keys(row)[4]];
+                  const nominal = row[Object.keys(row)[5]];
+                  // Agregar el campo "dif" a cada fila
+                  actual > nominal
+                    ? (row.dif = Math.abs(
+                        Math.abs(actual) - Math.abs(nominal)
+                      ).toFixed(3))
+                    : (row.dif =
+                        Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(
+                          3
+                        ) * -1);
 
-                //-------------------------------------------------
-                //--- CALCULO DE LA DESVIACION O DIFERENCIA -------
-                //-------------------------------------------------
-                // Acceso a la columna por índice
-                const actual = row[Object.keys(row)[4]];
-                const nominal = row[Object.keys(row)[5]];
-                 // Agregar el campo "dif" a cada fila 
-                actual > nominal ? 
-                row.dif = Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(3):
-                row.dif = Math.abs(Math.abs(actual) - Math.abs(nominal)).toFixed(3) * (-1);
-                
-                //-------------------------------------------------
-                //--- CALCULO DE LA SIGNOS Y SOBRE TOLERANCIA -----
-                //-------------------------------------------------
-                const tolSup = parseFloat(row[Object.keys(row)[6]]);
-                const tolInf = parseFloat(row[Object.keys(row)[7]]); 
-                let signoIntervalo = "";  
-                let colorIntervalo = "";
+                  //-------------------------------------------------
+                  //--- CALCULO DE LA SIGNOS Y SOBRE TOLERANCIA -----
+                  //-------------------------------------------------
+                  const tolSup = parseFloat(row[Object.keys(row)[6]]);
+                  const tolInf = parseFloat(row[Object.keys(row)[7]]);
+                  let signoIntervalo = "";
+                  let colorIntervalo = "";
 
-                if (row.dif > 0 && row.dif < tolSup / 4) {
-                  signoIntervalo = "+";
-                  colorIntervalo = "G";
-                } else if (row.dif >= tolSup / 4 && row.dif < 2 * tolSup / 4) {
-                  signoIntervalo = "++";
-                  colorIntervalo = "G";
-                } else if (row.dif >= 2 * tolSup / 4 && row.dif < 3 * tolSup / 4) {
-                  signoIntervalo = "+++";
-                  colorIntervalo = "G";
-                } else if (row.dif >= 3 * tolSup / 4 && row.dif <= tolSup) {
-                  signoIntervalo = "++++";
-                  colorIntervalo = "A";
-                } else if (row.dif < 0 && row.dif > tolInf / 4) {
-                  signoIntervalo = "-";
-                  colorIntervalo = "G";
-                } else if (row.dif <= tolInf / 4 && row.dif > 2 * tolInf / 4) {
-                  signoIntervalo = "--";
-                  colorIntervalo = "G";
-                } else if (row.dif <= 2 * tolInf / 4 && row.dif > 3 * tolInf / 4) {
-                  signoIntervalo = "---";
-                  colorIntervalo = "G";
-                } else if (row.dif <= 3 * tolInf / 4 && row.dif >= tolInf) {
-                  signoIntervalo = "----";
-                  colorIntervalo = "A";
-                } else if ( row.dif <= tolInf){
-                  signoIntervalo = (Math.abs(tolInf) + row.dif).toFixed(3);
-                  colorIntervalo = "R";
-                } else if ( row.dif >= tolSup){
-                  signoIntervalo = (row.dif - Math.abs(tolSup)).toFixed(3); 
-                  colorIntervalo = "R";
-                }
+                  if (row.dif > 0 && row.dif < tolSup / 4) {
+                    signoIntervalo = "+";
+                    colorIntervalo = "G";
+                  } else if (
+                    row.dif >= tolSup / 4 &&
+                    row.dif < (2 * tolSup) / 4
+                  ) {
+                    signoIntervalo = "++";
+                    colorIntervalo = "G";
+                  } else if (
+                    row.dif >= (2 * tolSup) / 4 &&
+                    row.dif < (3 * tolSup) / 4
+                  ) {
+                    signoIntervalo = "+++";
+                    colorIntervalo = "G";
+                  } else if (row.dif >= (3 * tolSup) / 4 && row.dif <= tolSup) {
+                    signoIntervalo = "++++";
+                    colorIntervalo = "A";
+                  } else if (row.dif < 0 && row.dif > tolInf / 4) {
+                    signoIntervalo = "-";
+                    colorIntervalo = "G";
+                  } else if (
+                    row.dif <= tolInf / 4 &&
+                    row.dif > (2 * tolInf) / 4
+                  ) {
+                    signoIntervalo = "--";
+                    colorIntervalo = "G";
+                  } else if (
+                    row.dif <= (2 * tolInf) / 4 &&
+                    row.dif > (3 * tolInf) / 4
+                  ) {
+                    signoIntervalo = "---";
+                    colorIntervalo = "G";
+                  } else if (row.dif <= (3 * tolInf) / 4 && row.dif >= tolInf) {
+                    signoIntervalo = "----";
+                    colorIntervalo = "A";
+                  } else if (row.dif <= tolInf) {
+                    signoIntervalo = (Math.abs(tolInf) + row.dif).toFixed(3);
+                    colorIntervalo = "R";
+                  } else if (row.dif >= tolSup) {
+                    signoIntervalo = (row.dif - Math.abs(tolSup)).toFixed(3);
+                    colorIntervalo = "R";
+                  }
 
-                row.exc = signoIntervalo;
-                row.c = colorIntervalo;
+                  row.exc = signoIntervalo;
+                  row.c = colorIntervalo;
+                });
 
-              });
-
-
-
-              const result = { data: rows };
-              stmt.finalize(); // Finaliza la declaración después de su uso
-              db.close((err) => {
-                if (err) {
-                  console.error("Error al cerrar la base de datos:", err.message);
-                  reject(err);
-                } else {
-                  console.log("Base de datos cerrada");
-                  resolve(result); // Resuelve la promesa con el resultado
-                }
-              });
-            }
-          });
+                const result = { data: rows };
+                stmt.finalize(); // Finaliza la declaración después de su uso
+                db.close((err) => {
+                  if (err) {
+                    console.error(
+                      "Error al cerrar la base de datos:",
+                      err.message
+                    );
+                    reject(err);
+                  } else {
+                    console.log("Base de datos cerrada");
+                    resolve(result); // Resuelve la promesa con el resultado
+                  }
+                });
+              }
+            });
+          }
         }
-      });
+      );
+    } catch (error) {
+      console.error("Error al leer el archivo:", error);
+      reject(error);
+    }
+  });
+}
 
+async function readFileData(dbFolderPath, fileName, partnb) {
+  return new Promise((resolve, reject) => {
+    try {
+      const filePath = path.join(dbFolderPath, fileName);
+
+      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        throw new Error(
+          `El archivo '${fileName}' no existe o no es un archivo válido.`
+        );
+      }
+
+      const db = new sqlite3.Database(
+        filePath,
+        sqlite3.OPEN_READWRITE,
+        (err) => {
+          if (err) {
+            console.error("Error al abrir la base de datos:", err.message);
+            reject(err);
+          } else {
+            console.log("Conexión exitosa a la base de datos");
+
+            const stmt = db.prepare("SELECT * FROM title WHERE partnb = ?");
+
+            stmt.all(partnb, (err, rows) => {
+              if (err) {
+                console.error("Error al ejecutar la consulta:", err.message);
+                reject(err);
+              } else {
+                console.log("Consulta exitosa");
+                const result = { data: rows };
+                //console.log("rows", rows);
+                stmt.finalize(); // Finaliza la declaración después de su uso
+                db.close((err) => {
+                  if (err) {
+                    console.error(
+                      "Error al cerrar la base de datos:",
+                      err.message
+                    );
+                    reject(err);
+                  } else {
+                    console.log("Base de datos cerrada");
+                    resolve(result); // Resuelve la promesa con el resultado
+                  }
+                });
+              }
+            });
+          }
+        }
+      );
     } catch (error) {
       console.error("Error al leer el archivo:", error);
       reject(error);
@@ -259,50 +351,79 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
 }
 
 
+async function QueryWithFilter(dbFolderPath, request) {
 
-async function readFileData(dbFolderPath, fileName, partnb) {
+  
+  const firstMonth = request.DATO1;
+  const firstYear = request.DATO2;
+
+  const secondMonth = request.DATO3;
+  const secondYear = request.DATO4;
+
+  const fileName = request.DATO5;
+  const filterOrder = request.DATO6;
+  const searchWord = request.DATO7;
+
+console.log('Primer mes:', firstMonth);
+console.log('Primer ano:', firstYear);
+console.log('Segundo mes:', secondMonth);
+console.log('Segundo ano:', secondYear);
+console.log('Nombre del archivo:', fileName);
+console.log('Filtro de orden:', filterOrder);
+console.log('Palabra de búsqueda:', searchWord);
+ 
+
+const intervalo = generarIntervaloMeses(firstMonth, firstYear, secondMonth, secondYear,fileName);
+
+console.log(intervalo);
+
   return new Promise((resolve, reject) => {
-    try {
+    try {secondYear
       const filePath = path.join(dbFolderPath, fileName);
-
       if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-        throw new Error(`El archivo '${fileName}' no existe o no es un archivo válido.`);
+        throw new Error(
+          `El archivo '${fileName}' no existe o no es un archivo válido.`
+        );
       }
 
-      //console.log("filePath:", filePath);
+      const db = new sqlite3.Database(
+        filePath,
+        sqlite3.OPEN_READWRITE,
+        (err) => {
+          if (err) {
+            console.error("Error al abrir la base de datos:", err.message);
+            reject(err);
+          } else {
+            console.log("Conexión exitosa a la base de datos");
 
-      const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-          console.error("Error al abrir la base de datos:", err.message);
-          reject(err);
-        } else {
-          console.log("Conexión exitosa a la base de datos");
+            const stmt = db.prepare("SELECT * FROM title WHERE partnb = ?");
 
-          const stmt = db.prepare('SELECT * FROM title WHERE partnb = ?');
-
-          stmt.all(partnb,(err, rows) => {
-            if (err) {
-              console.error("Error al ejecutar la consulta:", err.message);
-              reject(err);
-            } else {
-              console.log("Consulta exitosa");
-              const result = { data: rows };
-              //console.log("rows", rows);
-              stmt.finalize(); // Finaliza la declaración después de su uso
-              db.close((err) => {
-                if (err) {
-                  console.error("Error al cerrar la base de datos:", err.message);
-                  reject(err);
-                } else {
-                  console.log("Base de datos cerrada");
-                  resolve(result); // Resuelve la promesa con el resultado
-                }
-              });
-            }
-          });
+            stmt.all(partnb, (err, rows) => {
+              if (err) {
+                console.error("Error al ejecutar la consulta:", err.message);
+                reject(err);
+              } else {
+                console.log("Consulta exitosa");
+                const result = { data: rows };
+                //console.log("rows", rows);
+                stmt.finalize(); // Finaliza la declaración después de su uso
+                db.close((err) => {
+                  if (err) {
+                    console.error(
+                      "Error al cerrar la base de datos:",
+                      err.message
+                    );
+                    reject(err);
+                  } else {
+                    console.log("Base de datos cerrada");
+                    resolve(result); // Resuelve la promesa con el resultado
+                  }
+                });
+              }
+            });
+          }
         }
-      });
-
+      );
     } catch (error) {
       console.error("Error al leer el archivo:", error);
       reject(error);
@@ -316,9 +437,9 @@ module.exports = {
   readFilesData,
   readFilesDataWithDay,
   readFileData,
-  readFileMeasurement
+  readFileMeasurement,
+  QueryWithFilter
 };
-
 
 function printObjectAsTable(obj) {
   for (const file in obj) {
@@ -327,5 +448,3 @@ function printObjectAsTable(obj) {
     console.log(); // Agregar línea en blanco para separar las tablas
   }
 }
-
-

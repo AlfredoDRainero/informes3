@@ -27,10 +27,35 @@ function obtenerYearFromDate(fecha) {
     return null; // Si no se encuentra el valor deseado
   }
 
+
+  function generarIntervaloMeses(mesInicial, anioInicial, mesFinal, anioFinal, file_Name) {
+    const meses = [];
+  
+    while (anioInicial !== anioFinal || mesInicial !== mesFinal) {
+      const year = anioInicial;
+      const month = mesInicial;
+      const fileName_year_month = `${file_Name}_${year}_${month}.db`;
+      
+      meses.push({ Filename: fileName_year_month });
+  
+      // Incrementa el mes y el año
+      mesInicial++;
+      if (mesInicial > 12) {
+        mesInicial = 1;
+        anioInicial++;
+      }
+    }
+  
+    const fileName_year_month = `${file_Name}_${anioFinal}_${mesFinal}.db`;
+    meses.push({     Filename: fileName_year_month   });
+    return meses;
+  }
+
   module.exports = {
     obtenerFechaMedicion,
     obtenerYearFromDate,
-    obtenerMonthFromDate
+    obtenerMonthFromDate,
+    generarIntervaloMeses
 
     
   };

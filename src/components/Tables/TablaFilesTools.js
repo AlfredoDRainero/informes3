@@ -125,42 +125,38 @@ const DataTableTools = () => {
     searchWord
   ) {
 
-    
-   
-
-    
-
     function separateDate(fechaString) {
       const options = {
         year: "numeric",
         month: "2-digit", // 2 dígitos para el mes (MM)
         day: "2-digit" // 2 dígitos para el día (DD)
       };
-  
+      
       const fechaString2 =  fechaString.toLocaleDateString("en-US",options)
-      const partes = fechaString2.split("-");
+      const partes = fechaString2.split("/");
+      console.log("partes:",partes)
       const date = {
-        year: parseInt(partes[0]),
-        month: parseInt(partes[1]),
-        day: parseInt(partes[2])
+        year: parseInt(partes[2]),
+        month: parseInt(partes[0])
       };
       return date;
     }
 
-    console.log("año", separateDate(fechaStart).year);
+   
+    if (fechaStart > fechaEnd) {
+      [fechaStart, fechaEnd] = [fechaEnd, fechaStart];    //intercambia las fechas de lugar si una es menor que la otra.
+    }
 
     try {
       const consulta = {
         MSJREQUEST: "J",
-        DATO1: separateDate(fechaStart).year,
-        DATO2: separateDate(fechaStart).month,
-        DATO3: separateDate(fechaStart).day,
+        DATO1: separateDate(fechaStart).month,
+        DATO2: separateDate(fechaStart).year,
+        DATO3: separateDate(fechaEnd).month,
         DATO4: separateDate(fechaEnd).year,
-        DATO5: separateDate(fechaEnd).month,
-        DATO6: separateDate(fechaEnd).day,
-        DATO7: filename,
-        DATO8: orderFilter,
-        DATO1: searchWord
+        DATO5: filename,
+        DATO6: orderFilter,
+        DATO7: searchWord
       };
       const result = await RequestMsj(consulta);
       console.log("Esperando a que se resuelva la promesa...", result);
@@ -271,8 +267,8 @@ const DataTableTools = () => {
                 selectedDateFrom,
                 selectedDateTo,
                 dataFile.file.substring(0,dataFile.file.lastIndexOf("_",dataFile.file.lastIndexOf("_") - 1)),
-                "asdasd",
-                "12312312",
+                orderText,
+                measurementSelected,
               )
             }
           >

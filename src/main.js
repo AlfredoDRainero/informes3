@@ -10,7 +10,8 @@ const {
   readFilesData,
   readFileData,
   readFileMeasurement,
-  QueryWithFilter
+  QueryWithOrderFilter,
+  QueryWithWordFilter
 } = require("../src/services/database/LoadDatabase_BSQLITE3");
 
 const path = require("path");
@@ -194,7 +195,12 @@ async function recoverIntervalDateMeasurementsOfOneName(request) {
     console.log("===================================")
     const userData = app.getAppPath();
     const dbFolder = path.join(userData, './data/');    
-    const data = await QueryWithFilter(dbFolder, request);
+    const partnbFilteredByOrder = await QueryWithOrderFilter(dbFolder, request);
+    console.log("========================================================= °")
+    console.log("** partnbFilteredByOrder:",partnbFilteredByOrder)
+    const data = await QueryWithWordFilter(dbFolder,request, partnbFilteredByOrder);
+    console.log("** data:",data)
+   
     return data;
   } catch (error) {
     console.error("Error:", error);

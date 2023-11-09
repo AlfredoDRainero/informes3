@@ -36,7 +36,7 @@ function obtenerYearFromDate(fecha) {
       const month = mesInicial;
       const fileName_year_month = `${file_Name}_${year}_${month}.db`;
       
-      meses.push({ Filename: fileName_year_month });
+      meses.push(fileName_year_month);
   
       // Incrementa el mes y el año
       mesInicial++;
@@ -47,7 +47,7 @@ function obtenerYearFromDate(fecha) {
     }
   
     const fileName_year_month = `${file_Name}_${anioFinal}_${mesFinal}.db`;
-    meses.push({     Filename: fileName_year_month   });
+    meses.push(fileName_year_month);
     return meses;
   }
 

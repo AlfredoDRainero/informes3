@@ -1,6 +1,5 @@
 const { generarIntervaloMeses } = require("../../utils/fecha");
 
-
 const fs = require("fs");
 const path = require("path");
 //const Database = require("sqlite3");
@@ -350,10 +349,7 @@ async function readFileData(dbFolderPath, fileName, partnb) {
   });
 }
 
-
-async function QueryWithFilter(dbFolderPath, request) {
-
-  
+async function QueryWithOrderFilter(dbFolderPath, request) {
   const firstMonth = request.DATO1;
   const firstYear = request.DATO2;
 
@@ -364,73 +360,190 @@ async function QueryWithFilter(dbFolderPath, request) {
   const filterOrder = request.DATO6;
   const searchWord = request.DATO7;
 
-console.log('Primer mes:', firstMonth);
-console.log('Primer ano:', firstYear);
-console.log('Segundo mes:', secondMonth);
-console.log('Segundo ano:', secondYear);
-console.log('Nombre del archivo:', fileName);
-console.log('Filtro de orden:', filterOrder);
-console.log('Palabra de búsqueda:', searchWord);
- 
+  /*console.log("Primer mes:", firstMonth);
+  console.log("Primer ano:", firstYear);
+  console.log("Segundo mes:", secondMonth);
+  console.log("Segundo ano:", secondYear);
+  console.log("Nombre del archivo:", fileName);
+  console.log("Filtro de orden:", filterOrder);
+  console.log("Palabra de busqueda:", searchWord);*/
 
-const intervalo = generarIntervaloMeses(firstMonth, firstYear, secondMonth, secondYear,fileName);
+  const intervalo = generarIntervaloMeses(
+    firstMonth,
+    firstYear,
+    secondMonth,
+    secondYear,
+    fileName
+  );
 
-console.log(intervalo);
+  for (const file of intervalo) {
+    console.log("intervalo:", file);
 
-  return new Promise((resolve, reject) => {
-    try {secondYear
-      const filePath = path.join(dbFolderPath, fileName);
-      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-        throw new Error(
-          `El archivo '${fileName}' no existe o no es un archivo válido.`
+    return new Promise((resolve, reject) => {
+      try {
+        const filePath = path.join(dbFolderPath, file);
+        if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+          throw new Error(
+            `El archivo '${file}' no existe o no es un archivo válido.`
+          );
+        }
+
+        const db = new sqlite3.Database(
+          filePath,
+          sqlite3.OPEN_READWRITE,
+          (err) => {
+            if (err) {
+              console.error("Error al abrir la base de datos:", err.message);
+              reject(err);
+            } else {
+              console.log("Conexión exitosa a la base de datos");
+
+              const stmt = db.prepare(
+                "SELECT partnb FROM title WHERE orden = ?"
+              );
+
+              stmt.all(filterOrder, (err, rows) => {
+                if (err) {
+                  console.error("Error al ejecutar la consulta:", err.message);
+                  reject(err);
+                } else {
+                  console.log("Consulta exitosa");
+                  const result = rows;
+                  console.log("result", result);
+                  stmt.finalize(); // Finaliza la declaración después de su uso
+                  db.close((err) => {
+                    if (err) {
+                      console.error(
+                        "Error al cerrar la base de datos:",
+                        err.message
+                      );
+                      reject(err);
+                    } else {
+                      console.log("Base de datos cerrada");
+                      resolve(result); // Resuelve la promesa con el resultado
+                    }
+                  });
+                }
+              });
+            }
+          }
         );
+      } catch (error) {
+        console.error("Error al leer el archivo:", error);
+        reject(error);
       }
+    });
+  }
+}
 
-      const db = new sqlite3.Database(
-        filePath,
-        sqlite3.OPEN_READWRITE,
-        (err) => {
-          if (err) {
-            console.error("Error al abrir la base de datos:", err.message);
-            reject(err);
-          } else {
-            console.log("Conexión exitosa a la base de datos");
+async function QueryWithWordFilter(dbFolderPath, request, partnbs) {
+  const firstMonth = request.DATO1;
+  const firstYear = request.DATO2;
 
-            const stmt = db.prepare("SELECT * FROM title WHERE partnb = ?");
+  const secondMonth = request.DATO3;
+  const secondYear = request.DATO4;
 
-            stmt.all(partnb, (err, rows) => {
+  const fileName = request.DATO5;
+  const filterOrder = request.DATO6;
+  const searchWord = request.DATO7;
+
+  /*console.log("Primer mes:", firstMonth);
+  console.log("Primer ano:", firstYear);
+  console.log("Segundo mes:", secondMonth);
+  console.log("Segundo ano:", secondYear);
+  console.log("Nombre del archivo:", fileName);
+  console.log("Filtro de orden:", filterOrder);
+  console.log("Palabra de busqueda:", searchWord);*/
+
+
+  //searchWord = "F";
+
+  const intervalo = generarIntervaloMeses(
+    firstMonth,
+    firstYear,
+    secondMonth,
+    secondYear,
+    fileName
+  );
+
+let ciclos = 0;
+ console.log("partnbs inside:",partnbs , "intervalo:", intervalo)
+
+  for (const file of intervalo) {
+    console.log("intervalo:", file);
+
+    for (const partnbNumberQuery of partnbs) {
+      console.log("partnbNumberQuery:", partnbNumberQuery);
+
+      let idmeasurement = searchWord;
+      let partnb = partnbNumberQuery.partnb;
+      ciclos++
+      console.log("ciclos:",ciclos)
+      console.log("busqueda: partnb:",partnb,"idmeasurement:",idmeasurement)
+
+      return new Promise((resolve, reject) => {
+        try {
+          const filePath = path.join(dbFolderPath, file);
+          if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+            throw new Error(
+              `El archivo '${file}' no existe o no es un archivo válido.`
+            );
+          }
+
+          const db = new sqlite3.Database(
+            filePath,
+            sqlite3.OPEN_READWRITE,
+            (err) => {
               if (err) {
-                console.error("Error al ejecutar la consulta:", err.message);
+                console.error("Error al abrir la base de datos:", err.message);
                 reject(err);
               } else {
-                console.log("Consulta exitosa");
-                const result = { data: rows };
-                //console.log("rows", rows);
-                stmt.finalize(); // Finaliza la declaración después de su uso
-                db.close((err) => {
+                console.log("Conexión exitosa a la base de datos");
+
+                const stmt = db.prepare(
+                  "SELECT * FROM measurement WHERE partnb = ? AND idmeasurement = ?"
+                );
+                
+
+                // stmt.all(dayQuery, variableA, variableB, (err, rows) => {
+                stmt.all(partnb, idmeasurement, (err, rows) => {
                   if (err) {
                     console.error(
-                      "Error al cerrar la base de datos:",
+                      "Error al ejecutar la consulta:",
                       err.message
                     );
                     reject(err);
                   } else {
-                    console.log("Base de datos cerrada");
-                    resolve(result); // Resuelve la promesa con el resultado
+                    console.log("Consulta exitosa");
+                    //const result = rows;
+                    const result = { data: rows };
+                    //console.log("result2", result);
+                    stmt.finalize(); // Finaliza la declaración después de su uso
+                    db.close((err) => {
+                      if (err) {
+                        console.error(
+                          "Error al cerrar la base de datos:",
+                          err.message
+                        );
+                        reject(err);
+                      } else {
+                        console.log("Base de datos cerrada");
+                        resolve(result); // Resuelve la promesa con el resultado
+                      }
+                    });
                   }
                 });
               }
-            });
-          }
+            }
+          );
+        } catch (error) {
+          console.error("Error al leer el archivo:", error);
+          reject(error);
         }
-      );
-    } catch (error) {
-      console.error("Error al leer el archivo:", error);
-      reject(error);
+      });
     }
-  });
+  }
 }
-
 
 module.exports = {
   readFilesInFolder,
@@ -438,7 +551,8 @@ module.exports = {
   readFilesDataWithDay,
   readFileData,
   readFileMeasurement,
-  QueryWithFilter
+  QueryWithOrderFilter,
+  QueryWithWordFilter
 };
 
 function printObjectAsTable(obj) {

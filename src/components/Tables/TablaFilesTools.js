@@ -94,12 +94,17 @@ const DataTableTools = () => {
 
   useEffect(() => {}, [msj]);
 
-  const [selectedDateFrom, setSelectedDateFrom] = useState(null);
-  const [selectedDateTo, setSelectedDateTo] = useState(null);
-  const [orderText, setOrderText] = useState(null);
+  const fechaaux1 = new Date("9/11/2023");
+  const fechaaux2 = new Date("9/11/2023"); 
+
+
+  const [selectedDateFrom, setSelectedDateFrom] = useState(fechaaux1);
+  const [selectedDateTo, setSelectedDateTo] = useState(fechaaux2);
+  const [orderText, setOrderText] = useState("F LIB M3 ZJ 4192");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showOrderText, setShowOrderText] = useState(false);
 
+   
   const handleDateChangeFrom = (date) => {
     setSelectedDateFrom(date);
     setShowDatePicker(false);
@@ -114,8 +119,6 @@ const DataTableTools = () => {
     setOrderText(text);
     setShowOrderText(false);
   };
-
-
   
   async function ReadDBIntervalDateSearchWord(
     fechaStart,

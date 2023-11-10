@@ -83,7 +83,7 @@ const Button1 = styled.button`
 const DataTableTools = () => {
   const [msj, setMsj] = useState([]);
 
-  //const { setMeasurementFile } = useMyContext();
+  const { setMeasurementFile } = useMyContext();
   const { dataFile } = useMyContext();
   const { measurementSelected } = useMyContext();
 
@@ -162,7 +162,9 @@ const DataTableTools = () => {
         DATO7: searchWord
       };
       const result = await RequestMsj(consulta);
-      console.log("Esperando a que se resuelva la promesa...", result);
+      console.log("Esperando a que se resuelva la promesa...");
+      console.log(result);
+    
     } catch (error) {
       console.error("Error al obtener el mensaje:", error);
     }

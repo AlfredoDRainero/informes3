@@ -199,8 +199,10 @@ async function recoverIntervalDateMeasurementsOfOneName(request) {
     console.log("========================================================= °")
     console.log("** partnbFilteredByOrder:",partnbFilteredByOrder)
     const data = await QueryWithWordFilter(dbFolder,request, partnbFilteredByOrder);
-    console.log("** data:",data)
-   
+    for (const result of data) {
+      console.log("Result:", result );
+    
+    }
     return data;
   } catch (error) {
     console.error("Error:", error);

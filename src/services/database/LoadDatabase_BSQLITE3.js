@@ -360,14 +360,6 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
   const filterOrder = request.DATO6;
   const searchWord = request.DATO7;
 
-  /*console.log("Primer mes:", firstMonth);
-  console.log("Primer ano:", firstYear);
-  console.log("Segundo mes:", secondMonth);
-  console.log("Segundo ano:", secondYear);
-  console.log("Nombre del archivo:", fileName);
-  console.log("Filtro de orden:", filterOrder);
-  console.log("Palabra de busqueda:", searchWord);*/
-
   const intervalo = generarIntervaloMeses(
     firstMonth,
     firstYear,
@@ -399,7 +391,7 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
               console.log("Conexión exitosa a la base de datos");
 
               const stmt = db.prepare(
-                "SELECT partnb FROM title WHERE orden = ?"
+                "SELECT partnb, date, time FROM title WHERE orden = ?"
               );
 
               stmt.all(filterOrder, (err, rows) => {
@@ -444,19 +436,7 @@ async function QueryWithWordFilter(dbFolderPath, request, partnbs) {
   const secondYear = request.DATO4;
 
   const fileName = request.DATO5;
-  const filterOrder = request.DATO6;
   const searchWord = request.DATO7;
-
-  /*console.log("Primer mes:", firstMonth);
-  console.log("Primer ano:", firstYear);
-  console.log("Segundo mes:", secondMonth);
-  console.log("Segundo ano:", secondYear);
-  console.log("Nombre del archivo:", fileName);
-  console.log("Filtro de orden:", filterOrder);
-  console.log("Palabra de busqueda:", searchWord);*/
-
-
-  //searchWord = "F";
 
   const intervalo = generarIntervaloMeses(
     firstMonth,
@@ -466,22 +446,16 @@ async function QueryWithWordFilter(dbFolderPath, request, partnbs) {
     fileName
   );
 
-let ciclos = 0;
- console.log("partnbs inside:",partnbs , "intervalo:", intervalo)
+  const results = [];
 
   for (const file of intervalo) {
     console.log("intervalo:", file);
 
-    for (const partnbNumberQuery of partnbs) {
-      console.log("partnbNumberQuery:", partnbNumberQuery);
+    const fileResults = await Promise.all(
+      partnbs.map(async (partnbNumberQuery) => {
+        const idmeasurement = searchWord;
+        const partnb = partnbNumberQuery.partnb;
 
-      let idmeasurement = searchWord;
-      let partnb = partnbNumberQuery.partnb;
-      ciclos++
-      console.log("ciclos:",ciclos)
-      console.log("busqueda: partnb:",partnb,"idmeasurement:",idmeasurement)
-
-      return new Promise((resolve, reject) => {
         try {
           const filePath = path.join(dbFolderPath, file);
           if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
@@ -490,59 +464,51 @@ let ciclos = 0;
             );
           }
 
-          const db = new sqlite3.Database(
-            filePath,
-            sqlite3.OPEN_READWRITE,
-            (err) => {
-              if (err) {
-                console.error("Error al abrir la base de datos:", err.message);
-                reject(err);
-              } else {
-                console.log("Conexión exitosa a la base de datos");
+          const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE);
 
-                const stmt = db.prepare(
-                  "SELECT * FROM measurement WHERE partnb = ? AND idmeasurement = ?"
-                );
-                
-
-                // stmt.all(dayQuery, variableA, variableB, (err, rows) => {
-                stmt.all(partnb, idmeasurement, (err, rows) => {
-                  if (err) {
-                    console.error(
-                      "Error al ejecutar la consulta:",
-                      err.message
-                    );
-                    reject(err);
-                  } else {
-                    console.log("Consulta exitosa");
-                    //const result = rows;
-                    const result = { data: rows };
-                    //console.log("result2", result);
-                    stmt.finalize(); // Finaliza la declaración después de su uso
-                    db.close((err) => {
-                      if (err) {
-                        console.error(
-                          "Error al cerrar la base de datos:",
-                          err.message
-                        );
-                        reject(err);
-                      } else {
-                        console.log("Base de datos cerrada");
-                        resolve(result); // Resuelve la promesa con el resultado
-                      }
-                    });
-                  }
-                });
-              }
-            }
+          const stmt = db.prepare(
+            "SELECT * FROM measurement WHERE partnb = ? AND idmeasurement = ?"
           );
+          stmt.date = partnbNumberQuery.date;
+          stmt.time = partnbNumberQuery.time;
+          const rows = await new Promise((resolveStmt, rejectStmt) => {
+            stmt.all(partnb, idmeasurement, (errStmt, rowsStmt) => {
+              if (errStmt) {
+                console.error(
+                  "Error al ejecutar la consulta:",
+                  errStmt.message
+                );
+                rejectStmt(errStmt);
+              } else {
+                resolveStmt(rowsStmt);
+              }
+            });
+          });
+          // Agregar date y time a cada fila en rows
+          const result2 = rows.map((row) => {
+            return {
+              ...row,
+              date: partnbNumberQuery.date,
+              time: partnbNumberQuery.time
+            };
+          });
+
+          //const result2 = rows;
+          stmt.finalize();
+          db.close();
+
+          return result2;
         } catch (error) {
           console.error("Error al leer el archivo:", error);
-          reject(error);
+          throw error;
         }
-      });
-    }
+      })
+    );
+
+    results.push(...fileResults);
   }
+
+  return results;
 }
 
 module.exports = {

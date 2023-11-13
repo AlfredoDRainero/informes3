@@ -10,6 +10,7 @@ export function useMyContext() {
 export function MyContextProvider({ children }) {
   const [data, setData] = useState("Datos iniciales");
   const [measurementFile, setMeasurementFile] = useState([]);
+  const [measurementFiltered, setMeasurementFiltered] = useState([]);
   const [dataFile, setDataFile] = useState([]);
   const [measurementSelected, setMeasurementSelected] = useState([]);
 
@@ -23,7 +24,9 @@ export function MyContextProvider({ children }) {
         dataFile,
         setDataFile,
         measurementSelected,
-        setMeasurementSelected
+        setMeasurementSelected,
+        measurementFiltered,
+        setMeasurementFiltered
       }}
     >
       {children}

@@ -12,6 +12,8 @@ import MyComponent from "./components/MyComponentTest";
 import TablaMeasurement from "./components/Tables/TablaMeasurement";
 import TablaDatos from "./components/Tables/TablaDatos";
 
+import TablaMeasurementFiltered from "./components/Tables/TablaMeasurementFiltered";
+
 
 import FileListTable from "./components/Tables/TablaFilesAll";
 import DataTableDay from "./components/Tables/TablaFilesDay";
@@ -391,6 +393,7 @@ function App() {
               <BottomContainer>
                 <LeftBottomContainer>
                   <TablaMeasurement />
+                  
                 </LeftBottomContainer>
                 <RightBottomContainer>
                   <BottomRightTopContainer>
@@ -401,6 +404,7 @@ function App() {
                   </BottomRightTopContainer>
                   <BottomRightBottomContainer>
                     Graficos
+                    <TablaMeasurementFiltered />
                   </BottomRightBottomContainer>
                 </RightBottomContainer>
               </BottomContainer>

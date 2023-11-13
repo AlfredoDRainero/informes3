@@ -51,7 +51,7 @@ async function readFilesData(dbFolderPath, fileName) {
             console.error("Error al abrir la base de datos:", err.message);
             reject(err);
           } else {
-            console.log("Conexión exitosa a la base de datos");
+           // console.log("Conexión exitosa a la base de datos");
 
             const stmt = db.prepare(
               "SELECT date, time, partcomment, partnb, orden FROM title"
@@ -62,7 +62,7 @@ async function readFilesData(dbFolderPath, fileName) {
                 console.error("Error al ejecutar la consulta:", err.message);
                 reject(err);
               } else {
-                console.log("Consulta exitosa");
+              //  console.log("Consulta exitosa");
                 const result = { data: rows };
                 stmt.finalize(); // Finaliza la declaración después de su uso
                 db.close((err) => {
@@ -114,7 +114,7 @@ async function readFilesDataWithDay(
             console.error("Error al abrir la base de datos:", err.message);
             reject(err);
           } else {
-            console.log("Conexión exitosa a la base de datos");
+            //console.log("Conexión exitosa a la base de datos");
 
             //const stmt = db.prepare('SELECT date, time, orden, partnb FROM title WHERE date = ? ');
             const stmt = db.prepare(
@@ -129,7 +129,7 @@ async function readFilesDataWithDay(
                 console.error("Error al ejecutar la consulta:", err.message);
                 reject(err);
               } else {
-                console.log("Consulta exitosa");
+              //  console.log("Consulta exitosa");
                 rows.forEach((row) => {
                   row.file = fileName;
                 });
@@ -181,7 +181,7 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
             console.error("Error al abrir la base de datos:", err.message);
             reject(err);
           } else {
-            console.log("Conexión exitosa a la base de datos");
+          //  console.log("Conexión exitosa a la base de datos");
 
             const stmt = db.prepare(
               "SELECT * FROM measurement WHERE partnb = ?"
@@ -192,7 +192,7 @@ async function readFileMeasurement(dbFolderPath, fileName, partnb) {
                 console.error("Error al ejecutar la consulta:", err.message);
                 reject(err);
               } else {
-                console.log("Consulta exitosa");
+            //    console.log("Consulta exitosa");
 
                 rows.forEach((row) => {
                   //-------------------------------------------------
@@ -312,7 +312,7 @@ async function readFileData(dbFolderPath, fileName, partnb) {
             console.error("Error al abrir la base de datos:", err.message);
             reject(err);
           } else {
-            console.log("Conexión exitosa a la base de datos");
+            console.log("tosa a la base de datos");
 
             const stmt = db.prepare("SELECT * FROM title WHERE partnb = ?");
 
@@ -348,6 +348,9 @@ async function readFileData(dbFolderPath, fileName, partnb) {
     }
   });
 }
+
+
+
 
 async function QueryWithOrderFilter(dbFolderPath, request) {
   const firstMonth = request.DATO1;
@@ -388,7 +391,7 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
               console.error("Error al abrir la base de datos:", err.message);
               reject(err);
             } else {
-              console.log("Conexión exitosa a la base de datos");
+             // console.log("Conexión exitosa a la base de datos");
 
               const stmt = db.prepare(
                 "SELECT partnb, date, time FROM title WHERE orden = ?"
@@ -399,7 +402,7 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
                   console.error("Error al ejecutar la consulta:", err.message);
                   reject(err);
                 } else {
-                  console.log("Consulta exitosa");
+               //   console.log("Consulta exitosa");
                   const result = rows;
                   console.log("result", result);
                   stmt.finalize(); // Finaliza la declaración después de su uso
@@ -463,14 +466,10 @@ async function QueryWithWordFilter(dbFolderPath, request, partnbs) {
               `El archivo '${file}' no existe o no es un archivo válido.`
             );
           }
-
           const db = new sqlite3.Database(filePath, sqlite3.OPEN_READWRITE);
-
           const stmt = db.prepare(
             "SELECT * FROM measurement WHERE partnb = ? AND idmeasurement = ?"
           );
-          stmt.date = partnbNumberQuery.date;
-          stmt.time = partnbNumberQuery.time;
           const rows = await new Promise((resolveStmt, rejectStmt) => {
             stmt.all(partnb, idmeasurement, (errStmt, rowsStmt) => {
               if (errStmt) {
@@ -484,7 +483,7 @@ async function QueryWithWordFilter(dbFolderPath, request, partnbs) {
               }
             });
           });
-          // Agregar date y time a cada fila en rows
+          // add date and time to row
           const result2 = rows.map((row) => {
             return {
               ...row,
@@ -493,7 +492,6 @@ async function QueryWithWordFilter(dbFolderPath, request, partnbs) {
             };
           });
 
-          //const result2 = rows;
           stmt.finalize();
           db.close();
 

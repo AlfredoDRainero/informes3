@@ -84,6 +84,7 @@ const DataTableTools = () => {
   const [msj, setMsj] = useState([]);
 
   const { setMeasurementFile } = useMyContext();
+  const { setMeasurementFiltered } = useMyContext();
   const { dataFile } = useMyContext();
   const { measurementSelected } = useMyContext();
 
@@ -163,7 +164,8 @@ const DataTableTools = () => {
       };
       const result = await RequestMsj(consulta);
       console.log("Esperando a que se resuelva la promesa...");
-      console.log(result);
+      console.log("resultado:",result);
+      setMeasurementFiltered(result);
     
     } catch (error) {
       console.error("Error al obtener el mensaje:", error);

@@ -2,6 +2,7 @@ import React, { useEffect, useState, createContext, useContext } from "react";
 import "./index.css";
 import styled, { keyframes } from "styled-components";
 
+
 //components
 import BurgerButton from "./components/BurgerButton";
 
@@ -14,13 +15,14 @@ import TablaDatos from "./components/Tables/TablaDatos";
 
 import TablaMeasurementFiltered from "./components/Tables/TablaMeasurementFiltered";
 
-
 import FileListTable from "./components/Tables/TablaFilesAll";
 import DataTableDay from "./components/Tables/TablaFilesDay";
 import DataTableShift from "./components/Tables/TablaFilesShift";
 import DataTableTools from "./components/Tables/TablaFilesTools";
 
 import { createGlobalStyle } from "styled-components";
+
+import LineChart from "./components/charts";
 
 const GlobalStyle = createGlobalStyle`
   /* Estilo del contenedor de la barra de desplazamiento */
@@ -85,10 +87,7 @@ const MenuIcon = styled.div`
   background-color: black;
   color: white;
   height: 20px;
- 
 
-
-  
   &:hover {
     animation: ${fadeIn} 0.3s ease;
     animation-fill-mode: forwards;
@@ -134,6 +133,10 @@ const BottomRightTopContainer = styled.div`
   flex-direction: column;
   flex: 1;
   //overflow-y: hidden;
+  //  display:grid;
+
+  // grid-template-rows: auto auto; /* Dos filas automáticas */
+  // grid-template-columns: 1fr;
 `;
 
 const BottomRightBottomContainer = styled.div`
@@ -161,9 +164,11 @@ const RightBottomContainer = styled.div`
   display: grid;
   width: 100%;
   height: 100%;
-  grid-template-rows: 70% 30%;
+
   flex-grow: 1;
   overflow-y: auto;
+  grid-template-rows: ${(props) =>
+    props.tools ? "32% 38% 30%" : "70% 0% 30%"};
 `;
 
 const FileListTopMenu = styled.div`
@@ -261,7 +266,6 @@ function App() {
   const [tableShift, setTableShift] = useState(false);
   const [tableFull, setTableFull] = useState(true);
   const [tools, setTools] = useState(false);
-  
 
   async function FileDataDb() {
     try {
@@ -320,6 +324,8 @@ function App() {
     setIsActiveButton4(true);
   };
 
+  const chartData = [10, 20, 15, 25, 30];
+
   return (
     <>
       <GlobalStyle />
@@ -327,11 +333,10 @@ function App() {
         <MainDiv>
           <div style={{ display: "flex" }}>
             <Sider>
-              <BurgerButton onClick={() => FileDataDb()}/>
-                  
-             
+              <BurgerButton onClick={() => FileDataDb()} />
+
               <MenuIcon onClick={() => FileDataDb()}>Save</MenuIcon>
-             {/* <MenuIcon>📂</MenuIcon>
+              {/* <MenuIcon>📂</MenuIcon>
               <MenuIcon>Imp</MenuIcon>*/}
             </Sider>
             <GridContainer>
@@ -393,9 +398,8 @@ function App() {
               <BottomContainer>
                 <LeftBottomContainer>
                   <TablaMeasurement />
-                  
                 </LeftBottomContainer>
-                <RightBottomContainer>
+                <RightBottomContainer tools={tools}>
                   <BottomRightTopContainer>
                     {tableFull && <FileListTable />}
                     {tableDay && <DataTableDay />}
@@ -403,8 +407,13 @@ function App() {
                     {tools && <DataTableTools />}
                   </BottomRightTopContainer>
                   <BottomRightBottomContainer>
+                    {tools && <TablaMeasurementFiltered />}
+                  </BottomRightBottomContainer>
+                  <BottomRightBottomContainer>
                     Graficos
-                    <TablaMeasurementFiltered />
+                    {tools && <div>
+                      <LineChart data={chartData} />
+                    </div>}
                   </BottomRightBottomContainer>
                 </RightBottomContainer>
               </BottomContainer>

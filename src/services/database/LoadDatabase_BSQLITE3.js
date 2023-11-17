@@ -381,7 +381,7 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
           throw new Error(
             `El archivo '${file}' no existe o no es un archivo válido.`
           );
-        }
+        }else{
 
         const db = new sqlite3.Database(
           filePath,
@@ -394,10 +394,14 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
              // console.log("Conexión exitosa a la base de datos");
 
               const stmt = db.prepare(
-                "SELECT partnb, date, time FROM title WHERE orden = ?"
+                "SELECT partnb, date, time FROM title WHERE orden LIKE ?"
               );
 
-              stmt.all(filterOrder, (err, rows) => {
+
+              const filter = `%${filterOrder}%`;
+
+
+              stmt.all(filter, (err, rows) => {
                 if (err) {
                   console.error("Error al ejecutar la consulta:", err.message);
                   reject(err);
@@ -423,7 +427,7 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
             }
           }
         );
-      } catch (error) {
+      }} catch (error) {
         console.error("Error al leer el archivo:", error);
         reject(error);
       }

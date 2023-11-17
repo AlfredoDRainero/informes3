@@ -191,14 +191,12 @@ async function recoverMeasurementsFromDBFileAndPartnb(dbFile,partnb) {
 
 async function recoverIntervalDateMeasurementsOfOneName(request) {
   try {    
-    console.log("request:",request)
+    //console.log("request:",request)
     console.log("===================================")
     const userData = app.getAppPath();
     const dbFolder = path.join(userData, './data/');    
-    const partnbFilteredByOrder = await QueryWithOrderFilter(dbFolder, request);
-    console.log("========================================================= °")
-    console.log("** partnbFilteredByOrder:",partnbFilteredByOrder)
-    const data = await QueryWithWordFilter(dbFolder,request, partnbFilteredByOrder);
+    const partnbFilteredByOrder = await QueryWithOrderFilter(dbFolder, request); // search for a partnb filter by order query
+    const data = await QueryWithWordFilter(dbFolder,request, partnbFilteredByOrder); //search for words linked by last partnb array
     for (const result of data) {
       console.log("Result:", result );
     

@@ -13,12 +13,14 @@ const Table = styled.table`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+  font-size: 12px;
+  grid-row-start: 1;
 `;
 
 const TableHead = styled.thead`
   background-color: #222831;
   color: #08d9d6;
+  height:20px;
 `;
 
 const TableRow = styled.tr`
@@ -39,7 +41,7 @@ const TableRow = styled.tr`
     //background-color: #393e46;
     //color: #eaeaea;
   }
-  font-size: 14px;
+  font-size: 12px;
   font-weight: normal;
 
   &:hover {
@@ -62,7 +64,7 @@ const TableHeaderCell = styled.th`
 function TablaMeasurementFiltered() {
   //const { data, setData } = useMyContext();
   const { measurementFiltered, setMeasurementFiltered } = useMyContext();
-  const { measurementSelected, setMeasurementSelected } = useMyContext();
+  //const { measurementSelected, setMeasurementSelected } = useMyContext();
   // Use data and setData in your component
 
   useEffect(() => {
@@ -86,28 +88,24 @@ function TablaMeasurementFiltered() {
 
   return (
 
-
-
-
-
-<table>
-  <thead>
-    <tr>
+<Table>
+  <TableHead>
+    <tr style={{fontSize:"9px", height:"10px"}}>
       {columns.map((column, index) => (
         <th key={index}>{column}</th>
       ))}
     </tr>
-  </thead>
+  </TableHead>
   <tbody>
     {measurementFiltered.map((row, rowIndex) => (
-      <tr key={rowIndex}>
+      <TableRow key={rowIndex}>
         {columns.map((column, columnIndex) => (
-          <td key={columnIndex}>{row[0][column]}</td>
+          <TableCell key={columnIndex}>{row[0][column]}</TableCell>
         ))}
-      </tr>
+      </TableRow>
     ))}
   </tbody>
-</table>
+</Table>
 
 
     

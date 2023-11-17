@@ -40,6 +40,7 @@
     "style-loader": "^3.0.0"
   },
   "dependencies": {
+    "echarts": "^5.4.3",
     "electron-squirrel-startup": "^1.0.0",
     "gsap": "^3.12.2",
     "nedb": "^1.8.0",

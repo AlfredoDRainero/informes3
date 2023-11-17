@@ -21,6 +21,7 @@ const Container = styled.div`
   color: white;
   padding: 15px;
   font-size: 12px;
+  height:100px;
 `;
 
 const Table = styled.table`
@@ -28,6 +29,7 @@ const Table = styled.table`
   border-collapse: collapse;
   background-color: #252a34;
   font-size: 12px;
+  height:20px;
 `;
 
 const Th = styled.th`
@@ -101,7 +103,7 @@ const DataTableTools = () => {
 
   const [selectedDateFrom, setSelectedDateFrom] = useState(fechaaux1);
   const [selectedDateTo, setSelectedDateTo] = useState(fechaaux2);
-  const [orderText, setOrderText] = useState("F LIB M3 ZJ 4192");
+  const [orderText, setOrderText] = useState();//F LIB M3 ZJ 4192
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showOrderText, setShowOrderText] = useState(false);
 
@@ -269,7 +271,7 @@ const DataTableTools = () => {
             <DataContent>{measurementSelected}</DataContent>
           )}
           <Button1
-            onClick={() =>
+            onClick={() => 
               ReadDBIntervalDateSearchWord(
                 selectedDateFrom,
                 selectedDateTo,

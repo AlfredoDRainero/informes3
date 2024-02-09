@@ -8,6 +8,10 @@ const TableContainer = styled.div`
   width: 100%;
   overflow-x: auto;
       font-size: 12px;
+      display: flex;
+      flex-direction: row;
+      height:auto;
+      //background-color: red;
 `;
 
 const Table = styled.table`
@@ -39,7 +43,7 @@ const TableCell = styled.td`
   padding: 8px;
   border: 1px solid #252A34;
   white-space: pre-wrap; /* Permite saltos de línea en el texto */
-  height: 2em; /* Ajusta la altura de la celda para acomodar dos renglones (ajusta según sea necesario) */
+  //height: 2em; /* Ajusta la altura de la celda para acomodar dos renglones (ajusta según sea necesario) */
 `;
 
 const TableHeaderCell = styled.th`
@@ -77,23 +81,33 @@ function TablaDatos() {
     <TableContainer>
     <Table>
       <TableHead>
-        <tr>
+        <>
           {columnas.slice(1).map((columna, index) => ( // Comenzamos desde el índice 1
+          <tr>
             <TableHeaderCell key={index}>{columna}</TableHeaderCell>
+            </tr>
           ))}
-        </tr>
-      </TableHead>
+       </>
+      </TableHead>  
+
+    </Table>
+
+    <Table>
+      
       <tbody>
         {dataFile.map((fila, index) => (
-          <TableRow key={index}>
+          <>
             {columnas.slice(1).map((columna, columnIndex) => ( // Comenzamos desde el índice 1
+            <TableRow key={index}>
               <TableCell key={columnIndex}>{fila[columna]}</TableCell>
+              </TableRow>
             ))}
-          </TableRow>
+          </> 
         ))}
       </tbody>
     </Table>
   </TableContainer>
+  
   );
 
 }

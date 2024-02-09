@@ -16,8 +16,8 @@ const Table = styled.table`
   background-color: #252a34;
   overflow-y: auto;
   font-size: 12px;
-
-  //background-color: red;
+width:auto;
+  background-color: red;
 `;
 
 const Th = styled.th`

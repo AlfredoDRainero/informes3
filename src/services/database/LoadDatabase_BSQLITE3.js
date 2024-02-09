@@ -397,6 +397,8 @@ async function QueryWithOrderFilter(dbFolderPath, request) {
                 "SELECT partnb, date, time FROM title WHERE orden LIKE ?"
               );
 
+              console.log("-------------------")
+              console.log("stmt:",stmt)
 
               const filter = `%${filterOrder}%`;
 

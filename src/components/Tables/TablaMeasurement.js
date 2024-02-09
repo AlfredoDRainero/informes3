@@ -23,8 +23,6 @@ const TableHead = styled.thead`
 
 const TableRow = styled.tr`
   &:nth-child(odd) {
-    //background-color: #252a34;
-    //color: #eaeaea;
 overflow-y: auto;
   overflow-x: hidden;
     background-color: ${(props) => (props.isSelected ? "#dddddd" : "#252a34")};
@@ -36,21 +34,19 @@ overflow-y: auto;
     background-color: ${(props) => (props.isSelected ? "#dddddd" : "#393e46")};
     border-color: ${(props) => (props.isSelected ? "#dddddd" : "#393e46")};
     color: ${(props) => (props.isSelected ? "#252a34" : "#eaeaea")};
-    //background-color: #393e46;
-    //color: #eaeaea;
   }
   font-size: 14px;
   font-weight: normal;
 
   &:hover {
-    //font-weight: bold;
+
     color: #08d9d6;
   }
 `;
 
 const TableCell = styled.td`
   padding: 5px;
-  //border: 1px solid #252a34;
+ 
 `;
 
 const TableHeaderCell = styled.th`
@@ -60,13 +56,13 @@ const TableHeaderCell = styled.th`
 `;
 
 function TablaMeasurement() {
-  //const { data, setData } = useMyContext();
+
   const { measurementFile, setMeasurementFile } = useMyContext();
   const { measurementSelected, setMeasurementSelected } = useMyContext();
-  // Use data and setData in your component
+
 
   useEffect(() => {
-    // console.log("datafiles :", measurementFile);
+
   }, [measurementFile]);
 
   const columnas =
@@ -101,12 +97,14 @@ function TablaMeasurement() {
             <TableRow
               key={index}
               isSelected={selectedRow === index}
-              //cellColorAlternate={cellColor}
+              
             >
               {columnas.map((columna, columnIndex) => {
                 if (columnIndex === 0) {
                   return (
-                    <TableCell key={columnIndex}>{fila[columna]}</TableCell>
+                    <TableCell key={columnIndex}
+                    style={{width: "10px" }}
+                    >{fila[columna]}</TableCell>
                   );
                 } else if (columnIndex > 1) {
                   let cellContent = fila[columna];
@@ -134,7 +132,7 @@ function TablaMeasurement() {
                   return (
                     <TableCell
                       key={columnIndex}
-                      style={{ color: cellColor }}
+                      style={{ color: cellColor,width: "10px" }}
                       onClick={() => handleRowClick(index) & setMeasurementSelected(cellContent)}
                     >
                       {cellContent}

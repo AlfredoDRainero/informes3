@@ -135,7 +135,7 @@ const DataTableTools = () => {
       const options = {
         year: "numeric",
         month: "2-digit", // 2 dígitos para el mes (MM)
-        day: "2-digit" // 2 dígitos para el día (DD)
+        day: "2-digit" // 2 dígitos para el día (DD)  
       };
       
       const fechaString2 =  fechaString.toLocaleDateString("en-US",options)
@@ -179,7 +179,7 @@ const DataTableTools = () => {
       <Table>
         <thead>
           <tr>
-            <Th>Shift's Reports</Th>
+            <Th>Tool's Reports</Th>
           </tr>
         </thead>
       </Table>

@@ -2,7 +2,6 @@ import React, { useEffect, useState, createContext, useContext } from "react";
 import "./index.css";
 import styled, { keyframes } from "styled-components";
 
-
 //components
 import BurgerButton from "./components/BurgerButton";
 
@@ -105,15 +104,20 @@ const TopContainer = styled.div`
   flex-grow: 0.1;
   background-color: #252a34;
   display: grid;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 50% 50%;
   align-items: end;
 `;
 
 const BottomContainer = styled.div`
   display: grid;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 50% 50%;
   flex-grow: 1;
   overflow-y: auto;
+`;
+
+const RightBottom = styled.div`
+  display: grid;
+  grid-template-columns: 60% 40%;
 `;
 
 const LeftBottomContainer = styled.div`
@@ -168,7 +172,19 @@ const RightBottomContainer = styled.div`
   flex-grow: 1;
   overflow-y: auto;
   grid-template-rows: ${(props) =>
-    props.tools ? "32% 38% 30%" : "70% 0% 30%"};
+    // props.tools ? "30px auto 20% 48%" : "auto 70% 0% 30%"};
+    props.tools ? "35% 30% 35%" : "35% 30% 35%"};
+`;
+
+const RightRightMenu = styled.div`
+  display: grid;
+  width: 100%;
+  height: 100%;
+
+  flex-grow: 1;
+  overflow-y: auto;
+  grid-template-rows: ${(props) => (props.tools ? "30px auto" : "30px auto")};
+  //props.tools ? "60% 40%" : "60% 40%"};
 `;
 
 const FileListTopMenu = styled.div`
@@ -304,24 +320,41 @@ function App() {
     setIsActiveButton2(false);
     setIsActiveButton3(false);
     setIsActiveButton4(false);
+    setTableShift(true);
+    setTableDay(false);
+    setTableFull(false);
+    setTools(false);
   };
   const handleButton2Click = () => {
     setIsActiveButton1(false);
     setIsActiveButton2(true);
     setIsActiveButton3(false);
     setIsActiveButton4(false);
+    setTableShift(false);
+    setTableDay(true);
+    setTableFull(false);
+    setTools(false);
+    Prueba();
   };
   const handleButton3Click = () => {
     setIsActiveButton1(false);
     setIsActiveButton2(false);
     setIsActiveButton3(true);
     setIsActiveButton4(false);
+    setTableShift(false);
+    setTableDay(false);
+    setTableFull(true);
+    setTools(false);
   };
   const handleButton4Click = () => {
     setIsActiveButton1(false);
     setIsActiveButton2(false);
     setIsActiveButton3(false);
     setIsActiveButton4(true);
+    setTableShift(false);
+    setTableDay(false);
+    setTableFull(false);
+    setTools(true);
   };
 
   const chartData = [10, 20, 15, 25, 30];
@@ -340,81 +373,43 @@ function App() {
               <MenuIcon>Imp</MenuIcon>*/}
             </Sider>
             <GridContainer>
-              <TopContainer>
-                <TablaDatos />
-                <FileListTopMenu>
-                  <FileListMenuButton1
-                    isActive={isActiveButton1}
-                    onClick={() =>
-                      setTableShift(true) &
-                      setTableDay(false) &
-                      setTableFull(false) &
-                      setTools(false) &
-                      handleButton1Click()
-                    }
-                  >
-                    <a>Shift</a>
-                  </FileListMenuButton1>
-                  <FileListMenuButton2
-                    isActive={isActiveButton2}
-                    onClick={() =>
-                      setTableShift(false) &
-                      setTableDay(true) &
-                      setTableFull(false) &
-                      setTools(false) &
-                      Prueba() &
-                      handleButton2Click()
-                    }
-                  >
-                    <a>Day</a>
-                  </FileListMenuButton2>
-                  <FileListMenuButton3
-                    isActive={isActiveButton3}
-                    onClick={() =>
-                      setTableShift(false) &
-                      setTableDay(false) &
-                      setTableFull(true) &
-                      setTools(false) &
-                      handleButton3Click()
-                    }
-                  >
-                    <a>Full DataBase</a>
-                  </FileListMenuButton3>
-                  <FileListMenuButton4
-                    isActive={isActiveButton4}
-                    onClick={() =>
-                      setTableShift(false) &
-                      setTableDay(false) &
-                      setTableFull(false) &
-                      setTools(true) &
-                      handleButton4Click()
-                    }
-                  >
-                    <a>Tools</a>
-                  </FileListMenuButton4>
-                </FileListTopMenu>
-              </TopContainer>
+              <TopContainer></TopContainer>
 
               <BottomContainer>
                 <LeftBottomContainer>
                   <TablaMeasurement />
                 </LeftBottomContainer>
+
                 <RightBottomContainer tools={tools}>
-                  <BottomRightTopContainer>
-                    {tableFull && <FileListTable />}
-                    {tableDay && <DataTableDay />}
-                    {tableShift && <DataTableShift />}
-                    {tools && <DataTableTools />}
-                  </BottomRightTopContainer>
+                  <RightBottom>
+                    <TablaDatos />
+
+                    <RightRightMenu>
+                      <ButtonRightMenu
+                        isActiveButton1={isActiveButton1}
+                        isActiveButton2={isActiveButton2}
+                        isActiveButton3={isActiveButton3}
+                        isActiveButton4={isActiveButton4}
+                        handleButton1Click={handleButton1Click}
+                        handleButton2Click={handleButton2Click}
+                        handleButton3Click={handleButton3Click}
+                        handleButton4Click={handleButton4Click}
+                      />
+
+                      <BottomRightTopContainer>
+                        {tableFull && <FileListTable />}
+                        {tableDay && <DataTableDay />}
+                        {tableShift && <DataTableShift />}
+                        {tools && <DataTableTools />}
+                      </BottomRightTopContainer>
+                    </RightRightMenu>
+                  </RightBottom>
+
                   <BottomRightBottomContainer>
                     {tools && <TablaMeasurementFiltered />}
                   </BottomRightBottomContainer>
-                  <BottomRightBottomContainer>
-                    Graficos
-                    {tools && <div>
-                      <LineChart data={chartData} />
-                    </div>}
-                  </BottomRightBottomContainer>
+
+                  <Chart tools={tools} chartData={chartData} />
                 </RightBottomContainer>
               </BottomContainer>
             </GridContainer>
@@ -422,6 +417,59 @@ function App() {
         </MainDiv>
       </MyContextProvider>
     </>
+  );
+}
+
+const Chart = ({ tools, chartData }) => {
+  return (
+    <BottomRightBottomContainer>
+      Graficos
+      {tools && (
+        <div>
+          <LineChart data={chartData} />
+        </div>
+      )}
+    </BottomRightBottomContainer>
+  );
+};
+
+function ButtonRightMenu({
+  isActiveButton1,
+  isActiveButton2,
+  isActiveButton3,
+  isActiveButton4,
+  handleButton1Click,
+  handleButton2Click,
+  handleButton3Click,
+  handleButton4Click
+}) {
+  return (
+    <FileListTopMenu>
+      <FileListMenuButton1
+        isActive={isActiveButton1}
+        onClick={handleButton1Click}
+      >
+        <a>Shift</a>
+      </FileListMenuButton1>
+      <FileListMenuButton2
+        isActive={isActiveButton2}
+        onClick={handleButton2Click}
+      >
+        <a>Day</a>
+      </FileListMenuButton2>
+      <FileListMenuButton3
+        isActive={isActiveButton3}
+        onClick={handleButton3Click}
+      >
+        <a>Full DataBase</a>
+      </FileListMenuButton3>
+      <FileListMenuButton4
+        isActive={isActiveButton4}
+        onClick={handleButton4Click}
+      >
+        <a>Tools</a>
+      </FileListMenuButton4>
+    </FileListTopMenu>
   );
 }
 

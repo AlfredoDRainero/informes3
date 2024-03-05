@@ -17,11 +17,14 @@ const LineChart = ({ data }) => {
     const yAxisMeassure = measurementFiltered.map((item) => item[0].actual);
 
     const xAxisDate = measurementFiltered.map((item) => item[0].date);
+    const tolSup = measurementFiltered.map((item) => item[0].uppertol);
+    const tolInf = measurementFiltered.map((item) => item[0].lowertol);
+    const nominal = measurementFiltered.map((item) => item[0].nominal);
     
     console.log("yAxisMeassure",yAxisMeassure)
     const option = {
       title: {
-        text: 'Temperature Change in the Coming Week'
+        text: 'Histogramic chart'
       },
       tooltip: {
         trigger: 'axis'
@@ -47,6 +50,51 @@ const LineChart = ({ data }) => {
         type: 'value',
         data: yAxisMeassure,
       },
+
+
+      visualMap: {
+        top: 50,
+        right: 10,
+        pieces: [
+          {
+            gt: 0,
+            lte: 0.02,
+            color: '#93CE07'
+          },
+          {
+            gt: 0.020,
+            lte: 0.040,
+            color: '#FBDB0F'
+          },
+          {
+            gt: 0.040,
+            lte: 150,
+            color: '#FC7D02'
+          },
+          {
+            gt: 0,
+            lte: -0.02,
+            color: '#FD0100'
+          },
+          {
+            gt: -0.02,
+            lte: -0.04,
+            color: '#AA069F'
+          },
+          {
+            gt: -0.04,
+            lte: -150,
+            color: '#AC3B2A'
+          }
+        ],
+        outOfRange: {
+          color: '#999'
+        }
+      },
+
+
+
+
       series: [
         {
           data: yAxisMeassure,
@@ -57,9 +105,71 @@ const LineChart = ({ data }) => {
               { type: 'min', name: 'Min' }
             ]
           },
+
+
+          /*markLine: {
+            silent: true,
+            lineStyle: {
+              color: '#FFF'
+            },
+            data: [
+              {
+                yAxis: 0.01
+              },
+              {
+                yAxis: 0.02
+              },
+              {
+                yAxis: 0.03
+              },
+              {
+                yAxis: 0.04
+              },
+              {
+                yAxis: 0.05
+              }
+            ]
+          }*/
+        },
+        {
+          data: tolSup,
+          type: 'line',
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max' },
+              { type: 'min', name: 'Min' }
+            ]
+          },
+
+        },
+        {
+          data: tolInf,
+          type: 'line',
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max' },
+              { type: 'min', name: 'Min' }
+            ]
+          },
+
+        },
+        {
+          data: nominal,
+          type: 'line',
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max' },
+              { type: 'min', name: 'Min' }
+            ]
+          },
+
         },
         
       ],
+
+      
+
+
     };
 
     

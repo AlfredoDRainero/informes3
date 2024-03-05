@@ -23,6 +23,8 @@ import { createGlobalStyle } from "styled-components";
 
 import LineChart from "./components/charts";
 
+import GaussChart from "./components/GaussChart";
+
 const GlobalStyle = createGlobalStyle`
   /* Estilo del contenedor de la barra de desplazamiento */
   ::-webkit-scrollbar {
@@ -117,7 +119,7 @@ const BottomContainer = styled.div`
 
 const RightBottom = styled.div`
   display: grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: 40% 60%;
 `;
 
 const LeftBottomContainer = styled.div`
@@ -425,8 +427,12 @@ const Chart = ({ tools, chartData }) => {
     <BottomRightBottomContainer>
       Graficos
       {tools && (
-        <div>
-          <LineChart data={chartData} />
+        <div style={{  display: 'grid',
+        gridTemplateColumns: '70% 30%'
+        //gridGap: '10px', 
+      }}>
+          <LineChart data={chartData}  />
+          <GaussChart data={chartData}  />
         </div>
       )}
     </BottomRightBottomContainer>

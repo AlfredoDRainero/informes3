@@ -125,7 +125,11 @@ ipcMain.on("msjToMainName", async (event, request) => {
         DATO9: '12312312',*/
       );} catch (error) { console.error("Error:", error); throw error;}},//medidas de un archivo
 
+
+      K: () => {try { return CopyFiles();} catch (error) { console.error("Error:", error); throw error;}},
     };
+
+    
 
   const REQUEST_DEFAULT = "-NULL-";
 
@@ -228,3 +232,29 @@ function SaveFile() {
 }
 
 
+async function CopyFiles(){
+const destPath = 'C:\\TEMP';
+
+const networkPaths = [
+  '\\\\169.254.79.172\\results',
+  '\\\\169.254.79.173\\results',
+  '\\\\169.254.79.174\\results',
+  '\\\\169.254.79.175\\results',
+];
+
+for (const networkPath of networkPaths) {
+  try {
+    const files = await readdir(networkPath, { withFileTypes: true });
+
+    for (const file of files) {
+      if (file.isFile() && path.extname(file.name) === '.txt') {
+        const srcFilePath = path.join(networkPath, file.name);
+        const destFilePath = path.join(destPath, file.name);
+        await copyFile(srcFilePath, destFilePath);
+      }
+    }
+  } catch (error) {
+    console.error(`Error copying files from ${networkPath}:`, error);
+  }
+}
+}

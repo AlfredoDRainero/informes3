@@ -75,7 +75,7 @@ async function SaveFilesToDB(ubicacion) {
       fs.writeFileSync(dbPath, ""); // Crear archivo vacío
     }
 
-    //console.log(quitarAcentos("Hóla Cáma ígual"))
+    console.log("trabajando ", archivo, " de ", archivos )
     //---------------graba contenido
     let contenido = fs.readFileSync(path.join(ubicacion, archivo), "utf8");
     let tituloToDB = splitTextTitulo(Titulo, partNumber);
